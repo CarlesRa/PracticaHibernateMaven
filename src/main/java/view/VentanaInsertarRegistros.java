@@ -12,6 +12,7 @@ import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
 import org.hibernate.cfg.Configuration;
+import org.hibernate.exception.ConstraintViolationException;
 import org.hibernate.service.ServiceRegistry;
 import hibernateutil.HibernateUtil;
 import model.TEstaciones;
@@ -19,6 +20,7 @@ import model.TLineaEstacion;
 import model.TLineaEstacionId;
 import model.TLineas;
 
+import javax.persistence.PersistenceException;
 import javax.swing.GroupLayout;
 import javax.swing.GroupLayout.Alignment;
 import javax.swing.JLabel;
@@ -80,24 +82,32 @@ public class VentanaInsertarRegistros extends JFrame {
 		
 		JLabel lblNuevaLnea = new JLabel("Nueva Línea");
 		lblNuevaLnea.setFont(new Font("Dialog", Font.BOLD, 24));
-		
+		final JTextPane tpNotificaciones = new JTextPane();
 		JButton btnInsertarLnea = new JButton("INSERTAR LÍNEA");
 		btnInsertarLnea.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				SessionFactory sessionF = HibernateUtil.getSessionFactory();
 				Session session = sessionF.openSession();
-				TLineaEstacionId idLinea = new TLineaEstacionId(Integer.valueOf(tfNumLinea.getText()), Integer.valueOf(tfNumEstacion.getText()));
+				org.hibernate.Transaction tr = session.beginTransaction();
+				//TLineaEstacionId idLinea = new TLineaEstacionId(Integer.valueOf(tfNumLinea.getText()), Integer.valueOf(tfNumEstacion.getText()));
+				TLineas linea = session.load(TLineas.class, Integer.valueOf(tfNumLinea.getText()));
+				TEstaciones estacion = session.load(TEstaciones.class, Integer.valueOf(tfNumEstacion.getText()));
+				TLineaEstacionId idLineaEstacion = new TLineaEstacionId(linea.getCodLinea(),estacion.getCodEstacion());
 				
-				TEstaciones idEstacion = new TEstaciones();
-				
-				TLineaEstacion tle = new TLineaEstacion(idLinea, new TEstaciones(), new TLineas(),Integer.valueOf(tfOrden.getText()));
-				session.save(tle);
-				session.close();
-				sessionF.close();
+				TLineaEstacion tle = new TLineaEstacion(idLineaEstacion, null, null,Integer.valueOf(tfOrden.getText()));
+				try {
+					session.save(tle);
+					tr.commit();
+					tpNotificaciones.setText("Insertado correctamente!!");
+				}catch(ConstraintViolationException cve) {
+					tpNotificaciones.setText("Error al insertar!!");
+				}catch(PersistenceException pe) {
+					tpNotificaciones.setText("Error al insertar!!");
+				}
 			}
 		});
 		
-		JTextPane textPane = new JTextPane();
+		
 		
 		GroupLayout gl_contentPane = new GroupLayout(contentPane);
 		gl_contentPane.setHorizontalGroup(
@@ -108,7 +118,7 @@ public class VentanaInsertarRegistros extends JFrame {
 						.addGroup(gl_contentPane.createSequentialGroup()
 							.addComponent(btnInsertarLnea)
 							.addGap(18)
-							.addComponent(textPane, GroupLayout.PREFERRED_SIZE, 205, GroupLayout.PREFERRED_SIZE))
+							.addComponent(tpNotificaciones, GroupLayout.PREFERRED_SIZE, 205, GroupLayout.PREFERRED_SIZE))
 						.addComponent(lblNuevaLnea)
 						.addGroup(gl_contentPane.createSequentialGroup()
 							.addComponent(lblNumeroLnea)
@@ -138,14 +148,13 @@ public class VentanaInsertarRegistros extends JFrame {
 						.addComponent(lblNmeroEstacion)
 						.addComponent(tfNumEstacion, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
 					.addPreferredGap(ComponentPlacement.RELATED)
-					.addGroup(gl_contentPane.createParallelGroup(Alignment.TRAILING)
-						.addGroup(gl_contentPane.createSequentialGroup()
-							.addGroup(gl_contentPane.createParallelGroup(Alignment.BASELINE)
-								.addComponent(lblOrden)
-								.addComponent(tfOrden, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
-							.addPreferredGap(ComponentPlacement.RELATED, 101, Short.MAX_VALUE)
-							.addComponent(btnInsertarLnea))
-						.addComponent(textPane, GroupLayout.PREFERRED_SIZE, 76, GroupLayout.PREFERRED_SIZE))
+					.addGroup(gl_contentPane.createParallelGroup(Alignment.BASELINE)
+						.addComponent(lblOrden)
+						.addComponent(tfOrden, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+					.addPreferredGap(ComponentPlacement.RELATED, 101, Short.MAX_VALUE)
+					.addGroup(gl_contentPane.createParallelGroup(Alignment.TRAILING, false)
+						.addComponent(tpNotificaciones)
+						.addComponent(btnInsertarLnea, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
 					.addContainerGap())
 		);
 		contentPane.setLayout(gl_contentPane);

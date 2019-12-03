@@ -1,11 +1,14 @@
+import javax.swing.JFrame;
 import javax.swing.WindowConstants;
 
 import view.VentanaInsertarRegistros;
+import view.VentanaPrincipal;
 
 public class Main {
 	public static void main(String[] args) {
-		VentanaInsertarRegistros ventanaInRegistros = new VentanaInsertarRegistros();
-		ventanaInRegistros.setVisible(true);
-		ventanaInRegistros.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+		VentanaPrincipal vPrincipal = new VentanaPrincipal();
+		vPrincipal.setTitle("Ventana Principal");
+		vPrincipal.setVisible(true);
+		vPrincipal.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 	}
 }

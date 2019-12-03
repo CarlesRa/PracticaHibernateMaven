@@ -13,6 +13,7 @@ import javax.swing.table.DefaultTableModel;
 import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
+import org.hibernate.Transaction;
 import org.hibernate.query.Query;
 
 import hibernateutil.HibernateUtil;
@@ -104,10 +105,10 @@ public class VentanaListarTrenes extends JFrame {
 		dtm.setColumnIdentifiers(new Object[] {"CodTren","Nombre","Tipo","CodLinea","CodCochera"});
 		
 		Session session = HibernateUtil.getSessionFactory().openSession();
-		org.hibernate.Transaction tr = session.beginTransaction();
-		Query query = session.createQuery("from TTrenes");
+		Transaction tr = session.beginTransaction();
+		@SuppressWarnings("unchecked")
+		Query<TTrenes> query = session.createQuery("from TTrenes");
 		ArrayList<TTrenes> trenes =(ArrayList<TTrenes>) query.list();
-		Iterator<TTrenes> it = trenes.iterator();
 		for(TTrenes t : trenes) {
 			Object[] row = {t.getCodTren(), t.getNombre(), t.getTipo(), t.getTLineas().getCodLinea(), t.getTCocheras().getCodCochera()};
 			dtm.addRow(row);
