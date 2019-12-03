@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Generated 29 nov. 2019 17:36:32 by Hibernate Tools 5.2.12.Final --><!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN" "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<hibernate-mapping auto-import="true" default-access="property" default-cascade="none" default-lazy="true">
+    <class catalog="metro_madriz" dynamic-insert="false" dynamic-update="false" mutable="true" name="model.TAccesos" optimistic-lock="version" polymorphism="implicit" select-before-update="false" table="t_accesos">
+        <id name="codAcceso" type="int">
+            <column name="cod_acceso"/>
+            <generator class="assigned"/>
+        </id>
+        <many-to-one class="model.TEstaciones" embed-xml="true" fetch="select" insert="true" name="TEstaciones" not-found="exception" optimistic-lock="true" unique="false" update="true">
+            <column name="cod_estacion" not-null="true"/>
+        </many-to-one>
+        <property generated="never" lazy="false" name="descripcion" optimistic-lock="true" type="string" unique="false">
+            <column length="50" name="descripcion" not-null="true"/>
+        </property>
+    </class>
+</hibernate-mapping>

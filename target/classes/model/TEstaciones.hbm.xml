@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Generated 29 nov. 2019 17:36:32 by Hibernate Tools 5.2.12.Final --><!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN" "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<hibernate-mapping auto-import="true" default-access="property" default-cascade="none" default-lazy="true">
+    <class catalog="metro_madriz" dynamic-insert="false" dynamic-update="false" mutable="true" name="model.TEstaciones" optimistic-lock="version" polymorphism="implicit" select-before-update="false" table="t_estaciones">
+        <id name="codEstacion" type="int">
+            <column name="cod_estacion"/>
+            <generator class="assigned"/>
+        </id>
+        <property generated="never" lazy="false" name="nombre" optimistic-lock="true" type="string" unique="false">
+            <column length="50" name="nombre" not-null="true"/>
+        </property>
+        <property generated="never" lazy="false" name="direccion" optimistic-lock="true" type="string" unique="false">
+            <column length="50" name="direccion" not-null="true"/>
+        </property>
+        <property generated="never" lazy="false" name="numaccesos" optimistic-lock="true" type="java.lang.Integer" unique="false">
+            <column name="numaccesos"/>
+        </property>
+        <property generated="never" lazy="false" name="numlineas" optimistic-lock="true" type="java.lang.Integer" unique="false">
+            <column name="numlineas"/>
+        </property>
+        <property generated="never" lazy="false" name="numviajesdestino" optimistic-lock="true" type="java.lang.Integer" unique="false">
+            <column name="numviajesdestino"/>
+        </property>
+        <property generated="never" lazy="false" name="numviajesprocedencia" optimistic-lock="true" type="java.lang.Integer" unique="false">
+            <column name="numviajesprocedencia"/>
+        </property>
+        <set embed-xml="true" fetch="select" inverse="true" lazy="true" mutable="true" name="TLineaEstacions" optimistic-lock="true" sort="unsorted" table="t_LINEA_ESTACION">
+            <key on-delete="noaction">
+                <column name="cod_estacion" not-null="true"/>
+            </key>
+            <one-to-many class="model.TLineaEstacion" embed-xml="true" not-found="exception"/>
+        </set>
+        <set embed-xml="true" fetch="select" inverse="true" lazy="true" mutable="true" name="TAccesoses" optimistic-lock="true" sort="unsorted" table="t_accesos">
+            <key on-delete="noaction">
+                <column name="cod_estacion" not-null="true"/>
+            </key>
+            <one-to-many class="model.TAccesos" embed-xml="true" not-found="exception"/>
+        </set>
+    </class>
+</hibernate-mapping>

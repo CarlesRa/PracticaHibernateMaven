@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Generated 29 nov. 2019 17:36:32 by Hibernate Tools 5.2.12.Final --><!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN" "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<hibernate-mapping auto-import="true" default-access="property" default-cascade="none" default-lazy="true">
+    <class catalog="metro_madriz" dynamic-insert="false" dynamic-update="false" mutable="true" name="model.TLineaEstacion" optimistic-lock="version" polymorphism="implicit" select-before-update="false" table="t_LINEA_ESTACION">
+        <composite-id class="model.TLineaEstacionId" mapped="false" name="id" unsaved-value="undefined">
+            <key-property name="codLinea" type="int">
+                <column name="cod_linea"/>
+            </key-property>
+            <key-property name="codEstacion" type="int">
+                <column name="cod_estacion"/>
+            </key-property>
+        </composite-id>
+        <many-to-one class="model.TEstaciones" embed-xml="true" fetch="select" insert="false" name="TEstaciones" not-found="exception" optimistic-lock="true" unique="false" update="false">
+            <column name="cod_estacion" not-null="true"/>
+        </many-to-one>
+        <many-to-one class="model.TLineas" embed-xml="true" fetch="select" insert="false" name="TLineas" not-found="exception" optimistic-lock="true" unique="false" update="false">
+            <column name="cod_linea" not-null="true"/>
+        </many-to-one>
+        <property generated="never" lazy="false" name="orden" optimistic-lock="true" type="int" unique="false">
+            <column name="orden" not-null="true"/>
+        </property>
+    </class>
+</hibernate-mapping>
