@@ -1,25 +1,22 @@
 package view;
 
-import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.EventQueue;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-
-import javax.swing.JFrame;
-import javax.swing.JPanel;
-import javax.swing.UIManager;
-import javax.swing.WindowConstants;
-import javax.swing.border.Border;
-import javax.swing.border.EmptyBorder;
 import javax.swing.BorderFactory;
 import javax.swing.GroupLayout;
-import javax.swing.GroupLayout.Alignment;
+import javax.swing.JFrame;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
+import javax.swing.JPanel;
+import javax.swing.GroupLayout.Alignment;
+import javax.swing.border.Border;
+import javax.swing.border.EmptyBorder;
 
-public class VentanaPrincipal extends JFrame {
+public class NewVentanaPrincipal extends JFrame {
 
+	private static final long serialVersionUID = 1L;
 	private JPanel contentPane;
 
 	/**
@@ -29,7 +26,7 @@ public class VentanaPrincipal extends JFrame {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
-					VentanaPrincipal frame = new VentanaPrincipal();
+					NewVentanaPrincipal frame = new NewVentanaPrincipal();
 					frame.setVisible(true);
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -41,7 +38,7 @@ public class VentanaPrincipal extends JFrame {
 	/**
 	 * Create the frame.
 	 */
-	public VentanaPrincipal() {
+	public NewVentanaPrincipal() {
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 450, 300);
 		Border border = BorderFactory.createLineBorder(Color.black, 1);
@@ -63,7 +60,7 @@ public class VentanaPrincipal extends JFrame {
 		mntmNuevaLinea.addActionListener(new ActionListener() {
 			
 			public void actionPerformed(ActionEvent arg0) {
-				VentanaInsertarRegistros ventanaInRegistros = new VentanaInsertarRegistros();
+				NewVentanaInsertRegistros ventanaInRegistros = new NewVentanaInsertRegistros();
 				ventanaInRegistros.setVisible(true);
 				ventanaInRegistros.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);	
 			}

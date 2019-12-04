@@ -9,7 +9,8 @@ public class HibernateUtil {
 	private static SessionFactory buildSessionFactory() {
 		try {
 			return new Configuration().configure().buildSessionFactory(new StandardServiceRegistryBuilder().configure().build() );
-		}catch (Throwable ex) {System.err.println("Initial SessionFactory creation failed." + ex);
+		}catch (Throwable ex) {
+			System.err.println("Initial SessionFactory creation failed." + ex);
 			throw new ExceptionInInitializerError(ex);
 		}  
 		}  

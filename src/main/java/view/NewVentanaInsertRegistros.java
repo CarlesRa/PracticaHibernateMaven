@@ -1,39 +1,38 @@
 package view;
 
-import java.awt.BorderLayout;
 import java.awt.EventQueue;
+import java.awt.Font;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+
+import javax.persistence.PersistenceException;
+import javax.swing.GroupLayout;
+import javax.swing.JButton;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
+import javax.swing.JTextPane;
+import javax.swing.GroupLayout.Alignment;
+import javax.swing.LayoutStyle.ComponentPlacement;
 import javax.swing.border.EmptyBorder;
 
-import org.hibernate.query.Query;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
-import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
-import org.hibernate.cfg.Configuration;
 import org.hibernate.exception.ConstraintViolationException;
-import org.hibernate.service.ServiceRegistry;
+
 import hibernateutil.HibernateUtil;
 import model.TEstaciones;
 import model.TLineaEstacion;
 import model.TLineaEstacionId;
 import model.TLineas;
 
-import javax.persistence.PersistenceException;
-import javax.swing.GroupLayout;
-import javax.swing.GroupLayout.Alignment;
-import javax.swing.JLabel;
-import javax.swing.LayoutStyle.ComponentPlacement;
-import java.awt.Font;
-import javax.swing.JButton;
-import javax.swing.JTextArea;
-import javax.swing.JTextPane;
-import java.awt.event.ActionListener;
-import java.awt.event.ActionEvent;
+public class NewVentanaInsertRegistros extends JFrame {
 
-public class VentanaInsertarRegistros extends JFrame {
-
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	private JPanel contentPane;
 	private JTextField tfNumLinea;
 	private JTextField tfNumEstacion;
@@ -46,7 +45,7 @@ public class VentanaInsertarRegistros extends JFrame {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
-					VentanaInsertarRegistros frame = new VentanaInsertarRegistros();
+					NewVentanaInsertRegistros frame = new NewVentanaInsertRegistros();
 					frame.setVisible(true);
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -58,7 +57,7 @@ public class VentanaInsertarRegistros extends JFrame {
 	/**
 	 * Create the frame.
 	 */
-	public VentanaInsertarRegistros() {
+	public NewVentanaInsertRegistros() {
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 450, 300);
 		contentPane = new JPanel();
@@ -89,7 +88,6 @@ public class VentanaInsertarRegistros extends JFrame {
 				SessionFactory sessionF = HibernateUtil.getSessionFactory();
 				Session session = sessionF.openSession();
 				org.hibernate.Transaction tr = session.beginTransaction();
-				//TLineaEstacionId idLinea = new TLineaEstacionId(Integer.valueOf(tfNumLinea.getText()), Integer.valueOf(tfNumEstacion.getText()));
 				TLineas linea = session.load(TLineas.class, Integer.valueOf(tfNumLinea.getText()));
 				TEstaciones estacion = session.load(TEstaciones.class, Integer.valueOf(tfNumEstacion.getText()));
 				TLineaEstacionId idLineaEstacion = new TLineaEstacionId(linea.getCodLinea(),estacion.getCodEstacion());
@@ -159,4 +157,5 @@ public class VentanaInsertarRegistros extends JFrame {
 		);
 		contentPane.setLayout(gl_contentPane);
 	}
+
 }
