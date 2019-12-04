@@ -110,13 +110,14 @@ public class VentanaListarViajes extends JFrame {
 			public void actionPerformed(ActionEvent arg0) {
 				SessionFactory sessionF = HibernateUtil.getSessionFactory();
 				Session session = sessionF.openSession();
-				TViajes viaje = session.load(TViajes.class, Integer.parseInt(tfCodViaje.getText()));
-				
 				try {
+					TViajes viaje = session.load(TViajes.class, Integer.parseInt(tfCodViaje.getText()));
 					rellenarCampos(viaje);
 					tVerTrenes.setRowSelectionInterval(viaje.getCodViaje()-1, viaje.getCodViaje()-1);
 				}catch(ObjectNotFoundException onfe){
 					JOptionPane.showMessageDialog(null,"Ningun Viaje con ese código");
+				}catch(NumberFormatException nfe) {
+					JOptionPane.showMessageDialog(null,"Dato Erroneo....");
 				}
 			}
 		});
@@ -159,13 +160,17 @@ public class VentanaListarViajes extends JFrame {
 					
 					tfCodViaje.setText(String.valueOf((Integer.parseInt(tfCodViaje.getText()) - 1)));
 					TViajes viaje = session.load(TViajes.class, Integer.parseInt(tfCodViaje.getText()));
-					tVerTrenes.setRowSelectionInterval(viaje.getCodViaje(), viaje.getCodViaje());
+					tVerTrenes.setRowSelectionInterval(viaje.getCodViaje()-1, viaje.getCodViaje()-1);
 					rellenarCampos(viaje);
-				}catch(ObjectNotFoundException infe) {
+				}catch (NumberFormatException nfe) {
+					mensajeNoRegistros();
+					tfCodViaje.setText(String.valueOf((Integer.parseInt(tfCodViaje.getText()) + 1)));
+				}
+				catch(ObjectNotFoundException infe) {
 					mensajeNoRegistros();
 					tfCodViaje.setText(String.valueOf((Integer.parseInt(tfCodViaje.getText()) + 1)));
 				}catch(IllegalArgumentException iae) {
-					mensajeCampoCodigoVacio();
+					mensajeNoRegistros();
 					tfCodViaje.setText(String.valueOf((Integer.parseInt(tfCodViaje.getText()) + 1)));
 				}catch(HibernateException he) {
 					mensajeNoRegistros();
@@ -200,31 +205,36 @@ public class VentanaListarViajes extends JFrame {
 					.addGroup(gl_contentPane.createParallelGroup(Alignment.LEADING)
 						.addComponent(scrollPane, GroupLayout.DEFAULT_SIZE, 862, Short.MAX_VALUE)
 						.addGroup(gl_contentPane.createSequentialGroup()
-							.addComponent(btFirst)
-							.addGap(27)
-							.addComponent(btPrevious)
-							.addGap(102)
-							.addComponent(lblCodTren)
-							.addPreferredGap(ComponentPlacement.RELATED)
-							.addComponent(tfCodViaje, GroupLayout.PREFERRED_SIZE, 49, GroupLayout.PREFERRED_SIZE)
-							.addGap(48)
-							.addComponent(btnLocalizar)
-							.addPreferredGap(ComponentPlacement.RELATED, 211, Short.MAX_VALUE)
-							.addComponent(btNext)
-							.addGap(34)
-							.addComponent(btLastt))
-						.addGroup(gl_contentPane.createSequentialGroup()
-							.addComponent(lblNombre)
-							.addPreferredGap(ComponentPlacement.RELATED)
-							.addComponent(tfNombre, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-							.addPreferredGap(ComponentPlacement.UNRELATED)
-							.addComponent(lblNewLabel)
-							.addPreferredGap(ComponentPlacement.RELATED)
-							.addComponent(tfOrigen, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-							.addPreferredGap(ComponentPlacement.UNRELATED)
-							.addComponent(lblLinea)
-							.addPreferredGap(ComponentPlacement.RELATED)
-							.addComponent(tfDestino, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)))
+							.addGroup(gl_contentPane.createParallelGroup(Alignment.TRAILING, false)
+								.addGroup(gl_contentPane.createSequentialGroup()
+									.addComponent(lblNombre)
+									.addPreferredGap(ComponentPlacement.RELATED)
+									.addComponent(tfNombre))
+								.addGroup(Alignment.LEADING, gl_contentPane.createSequentialGroup()
+									.addComponent(btFirst)
+									.addGap(27)
+									.addComponent(btPrevious)
+									.addGap(102)
+									.addComponent(lblCodTren)
+									.addPreferredGap(ComponentPlacement.RELATED)
+									.addComponent(tfCodViaje, GroupLayout.PREFERRED_SIZE, 49, GroupLayout.PREFERRED_SIZE)))
+							.addGroup(gl_contentPane.createParallelGroup(Alignment.LEADING)
+								.addGroup(gl_contentPane.createSequentialGroup()
+									.addGap(48)
+									.addComponent(btnLocalizar)
+									.addPreferredGap(ComponentPlacement.RELATED, 211, Short.MAX_VALUE)
+									.addComponent(btNext)
+									.addGap(34)
+									.addComponent(btLastt))
+								.addGroup(Alignment.TRAILING, gl_contentPane.createSequentialGroup()
+									.addGap(84)
+									.addComponent(lblNewLabel)
+									.addPreferredGap(ComponentPlacement.UNRELATED)
+									.addComponent(tfOrigen, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+									.addPreferredGap(ComponentPlacement.UNRELATED)
+									.addComponent(lblLinea)
+									.addPreferredGap(ComponentPlacement.RELATED)
+									.addComponent(tfDestino, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)))))
 					.addContainerGap())
 		);
 		gl_contentPane.setVerticalGroup(
@@ -247,10 +257,10 @@ public class VentanaListarViajes extends JFrame {
 					.addGroup(gl_contentPane.createParallelGroup(Alignment.BASELINE)
 						.addComponent(lblNombre)
 						.addComponent(tfNombre, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-						.addComponent(lblNewLabel)
-						.addComponent(tfOrigen, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+						.addComponent(tfDestino, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
 						.addComponent(lblLinea)
-						.addComponent(tfDestino, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+						.addComponent(tfOrigen, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+						.addComponent(lblNewLabel))
 					.addContainerGap(GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
 		);
 		contentPane.setLayout(gl_contentPane);
@@ -279,7 +289,7 @@ public class VentanaListarViajes extends JFrame {
 	}
 
 	public void mensajeCampoCodigoVacio() {
-		JOptionPane.showMessageDialog(null,"No ha introducido ningun Código de tren");
+		JOptionPane.showMessageDialog(null,"No ha introducido ningun Código");
 	}
 	
 	public void seleccionarFila(TViajes viajes) {
