@@ -1,7 +1,5 @@
 package view;
 
-import java.awt.BorderLayout;
-import java.awt.EventQueue;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
@@ -20,7 +18,6 @@ import javax.swing.LayoutStyle.ComponentPlacement;
 import javax.swing.border.EmptyBorder;
 import javax.swing.table.DefaultTableModel;
 
-import org.hibernate.HibernateException;
 import org.hibernate.ObjectNotFoundException;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
@@ -28,7 +25,6 @@ import org.hibernate.Transaction;
 import org.hibernate.query.Query;
 
 import hibernateutil.HibernateUtil;
-import model.TCocheras;
 import model.TLineaEstacion;
 import model.TLineaEstacionId;
 
@@ -41,23 +37,7 @@ public class VentanaListarLineasEstacion extends JFrame {
 	private ArrayList<TLineaEstacion> lineasEstaciones;
 	private JTextField tfOrden;
 	private JTextField tfCodEstacion;
-	/**
-	 * Launch the application.
-	 */
-	public static void main(String[] args) {
-		EventQueue.invokeLater(new Runnable() {
-			public void run() {
-				try {
-					VentanaListarLineasEstacion frame = new VentanaListarLineasEstacion();
-					frame.setVisible(true);
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			}
-		});
-	}
 
-	
 	public VentanaListarLineasEstacion() {
 		setBounds(100, 100, 896, 451);
 		contentPane = new JPanel();
@@ -86,6 +66,7 @@ public class VentanaListarLineasEstacion extends JFrame {
 		}
 		
 		tr.commit();
+		session.close();
 		tVerTrenes.setModel(dtm);
 		scrollPane.setViewportView(tVerTrenes);
 		
@@ -97,7 +78,9 @@ public class VentanaListarLineasEstacion extends JFrame {
 				try {
 					TLineaEstacion lineaEstacion = session.load(TLineaEstacion.class, new TLineaEstacionId(Integer.parseInt(tfCodLinea.getText()),Integer.parseInt(tfCodEstacion.getText())));
 					rellenarCampos(lineaEstacion);
-					tVerTrenes.setRowSelectionInterval(lineaEstacion.getId().getCodLinea()-1, lineaEstacion.getId().getCodEstacion()-1);
+					int pos = getPosicion(Integer.parseInt(tfCodLinea.getText()), Integer.parseInt(tfCodEstacion.getText()));
+					tVerTrenes.setRowSelectionInterval(pos, pos);
+					session.close();
 				}catch(ObjectNotFoundException onfe){
 					mensajeCampoCodigoVacio();
 				}catch(NumberFormatException nfe) {
@@ -114,27 +97,18 @@ public class VentanaListarLineasEstacion extends JFrame {
 				Session session = sessionF.openSession();
 				try {
 					
-					tfCodLinea.setText(String.valueOf((Integer.parseInt(tfCodLinea.getText()) + 1)));
-					tfCodEstacion.setText(String.valueOf((Integer.parseInt(tfCodEstacion.getText()) + 1)));
-					TLineaEstacion lineaEstacion = session.load(TLineaEstacion.class, new TLineaEstacionId(Integer.parseInt(tfCodLinea.getText()),Integer.parseInt(tfCodEstacion.getText())));
-					tVerTrenes.setRowSelectionInterval(lineaEstacion.getId().getCodLinea()-1, lineaEstacion.getId().getCodEstacion()-1);
+					int pos = getPosicion(Integer.parseInt(tfCodLinea.getText()), Integer.parseInt(tfCodEstacion.getText()));
+					TLineaEstacion lineaEstacion = lineasEstaciones.get(pos + 1);
 					rellenarCampos(lineaEstacion);
 					
-				}catch(NumberFormatException nfe){
+					tVerTrenes.setRowSelectionInterval(pos + 1, pos + 1);
+					session.close();
+				}catch (IndexOutOfBoundsException iobe) {
+					mensajeNoRegistros();
+				}
+				catch(NumberFormatException nfe){
 					mensajeCampoCodigoVacio();
 				}
-				catch (IllegalArgumentException npe) {
-					mensajeNoRegistros();
-					tfCodLinea.setText(String.valueOf((Integer.parseInt(tfCodLinea.getText()) - 1)));
-				}
-				catch(ObjectNotFoundException infe) {
-					mensajeNoRegistros();
-					tfCodLinea.setText(String.valueOf((Integer.parseInt(tfCodLinea.getText()) - 1)));
-				}catch(HibernateException he) {
-					mensajeNoRegistros();
-					tfCodLinea.setText(String.valueOf((Integer.parseInt(tfCodLinea.getText()) - 1)));
-				}
-				
 			}
 		});
 		
@@ -146,23 +120,16 @@ public class VentanaListarLineasEstacion extends JFrame {
 				Session session = sessionF.openSession();
 				try {
 					
-					tfCodLinea.setText(String.valueOf((Integer.parseInt(tfCodLinea.getText()) - 1)));
-					tfCodEstacion.setText(String.valueOf((Integer.parseInt(tfCodEstacion.getText()) - 1)));
-					TLineaEstacion lineaEstacion = session.load(TLineaEstacion.class, new TLineaEstacionId(Integer.parseInt(tfCodLinea.getText()),Integer.parseInt(tfCodEstacion.getText())));
-					tVerTrenes.setRowSelectionInterval(lineaEstacion.getId().getCodLinea()-1, lineaEstacion.getId().getCodEstacion()-1);
+					int pos = getPosicion(Integer.parseInt(tfCodLinea.getText()), Integer.parseInt(tfCodEstacion.getText()));
+					TLineaEstacion lineaEstacion = lineasEstaciones.get(pos - 1);
 					rellenarCampos(lineaEstacion);
-				}catch (NumberFormatException nfe) {
-					mensajeCampoCodigoVacio();
-					tfCodLinea.setText(String.valueOf((Integer.parseInt(tfCodLinea.getText()) + 1)));
+					tVerTrenes.setRowSelectionInterval(pos - 1, pos - 1);
+					session.close();
+				}catch(IndexOutOfBoundsException iobe) {
+					mensajeNoRegistros();
 				}
-				catch(ObjectNotFoundException infe) {
-					mensajeNoRegistros();
-					tfCodLinea.setText(String.valueOf((Integer.parseInt(tfCodLinea.getText()) + 1)));
-				}catch(IllegalArgumentException iae) {
-					mensajeNoRegistros();
-					tfCodLinea.setText(String.valueOf((Integer.parseInt(tfCodLinea.getText()) + 1)));
-				}catch(HibernateException he) {
-					mensajeNoRegistros();
+				catch (NumberFormatException nfe) {
+					mensajeCampoCodigoVacio();
 					tfCodLinea.setText(String.valueOf((Integer.parseInt(tfCodLinea.getText()) + 1)));
 				}
 			}
@@ -283,6 +250,15 @@ public class VentanaListarLineasEstacion extends JFrame {
 	public void seleccionarFila(TLineaEstacion lineaEstacion) {
 		tVerTrenes.setRowSelectionInterval(tripPosition(lineaEstacion), tripPosition(lineaEstacion));
 	}
-
-
+	
+	public int getPosicion(int linea, int estacion) {
+		int posicion = 0;
+		for(int i=0; i<lineasEstaciones.size(); i++) {
+			if(lineasEstaciones.get(i).getId().getCodLinea() == linea && lineasEstaciones.get(i).getId().getCodEstacion() == estacion) {
+				posicion = i;
+				return posicion;
+			}
+		}
+		return posicion;
+	}
 }

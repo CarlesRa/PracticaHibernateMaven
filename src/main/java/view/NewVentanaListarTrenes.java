@@ -1,6 +1,5 @@
 package view;
 
-import java.awt.EventQueue;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
@@ -37,22 +36,6 @@ public class NewVentanaListarTrenes extends JFrame {
 	private JTextField tfLinea;
 	private JTextField tfCochera;
 	private ArrayList<TTrenes> trenes;
-	/**
-	 * Launch the application.
-	 */
-	public static void main(String[] args) {
-		EventQueue.invokeLater(new Runnable() {
-			public void run() {
-				try {
-					NewVentanaListarTrenes frame = new NewVentanaListarTrenes();
-					frame.setVisible(true);
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			}
-		});
-	}
-
 	
 	public NewVentanaListarTrenes() {
 		setBounds(100, 100, 896, 598);
@@ -111,11 +94,12 @@ public class NewVentanaListarTrenes extends JFrame {
 			public void actionPerformed(ActionEvent arg0) {
 				SessionFactory sessionF = HibernateUtil.getSessionFactory();
 				Session session = sessionF.openSession();
-				TTrenes tren = session.load(TTrenes.class, Integer.parseInt(tfCodTren.getText()));
-				
 				try {
+					TTrenes tren = session.load(TTrenes.class, Integer.parseInt(tfCodTren.getText()));
 					rellenarCampos(tren);
-					tVerTrenes.setRowSelectionInterval(tren.getCodTren()-1, tren.getCodTren()-1);
+					int posicion = getPosicion(Integer.parseInt(tfCodTren.getText()));
+					tVerTrenes.setRowSelectionInterval(posicion, posicion);
+					session.close();
 				}catch(NumberFormatException nfe) {
 					mensajeCampoCodigoVacio();
 				}
@@ -131,39 +115,34 @@ public class NewVentanaListarTrenes extends JFrame {
 				
 				SessionFactory sessionF = HibernateUtil.getSessionFactory();
 				Session session = sessionF.openSession();
-				try {
-					tfCodTren.setText(String.valueOf((Integer.parseInt(tfCodTren.getText()) + 1)));
-					System.out.println("Previus" + tfCodTren.getText());
-					TTrenes tren = session.load(TTrenes.class, Integer.parseInt(tfCodTren.getText()));
-					rellenarCampos(tren);
-					tVerTrenes.setRowSelectionInterval(tren.getCodTren() - 1, tren.getCodTren() - 1);
+				try {					
+					int posicion = getPosicion(Integer.parseInt(tfCodTren.getText()));
+					rellenarCampos(trenes.get(posicion + 1));
+					tVerTrenes.setRowSelectionInterval(posicion + 1, posicion + 1);
+					session.close();
+				}catch(IndexOutOfBoundsException iobe) {
+					mensajeNoRegistros();
 				}catch(NumberFormatException nfe) {
 					mensajeCampoCodigoVacio();
-				}catch(ObjectNotFoundException infe) {
-					JOptionPane.showMessageDialog(null,"No hay más registros");
-					tfCodTren.setText(String.valueOf((Integer.parseInt(tfCodTren.getText()) - 1)));
-				}catch(HibernateException he) {
-					JOptionPane.showMessageDialog(null,"No hay más registros");
-					tfCodTren.setText(String.valueOf((Integer.parseInt(tfCodTren.getText()) - 1)));
-				}
+				}	
 			}
 		});
 		
 		JButton btPrevious = new JButton("<");
 		btPrevious.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-
 				SessionFactory sessionF = HibernateUtil.getSessionFactory();
 				Session session = sessionF.openSession();
-				try {
-					
-					tfCodTren.setText(String.valueOf((Integer.parseInt(tfCodTren.getText()) - 1)));
-					TTrenes tren = session.load(TTrenes.class, Integer.parseInt(tfCodTren.getText()));
-					rellenarCampos(tren);
-					tVerTrenes.setRowSelectionInterval(tren.getCodTren(), tren.getCodTren());
+				try {					
+					int posicion = getPosicion(Integer.parseInt(tfCodTren.getText()));
+					rellenarCampos(trenes.get(posicion - 1));
+					tVerTrenes.setRowSelectionInterval(posicion - 1, posicion - 1);
+					session.close();
+				}catch(IndexOutOfBoundsException iobe) {
+					mensajeNoRegistros();
 				}catch(NumberFormatException nfe) {
 					mensajeCampoCodigoVacio();
-				}
+				}	
 				catch(ObjectNotFoundException infe) {
 					JOptionPane.showMessageDialog(null,"No hay más registros");
 					tfCodTren.setText(String.valueOf((Integer.parseInt(tfCodTren.getText()) + 1)));
@@ -293,5 +272,16 @@ public class NewVentanaListarTrenes extends JFrame {
 	
 	public void seleccionarFila(TTrenes tren) {
 		tVerTrenes.setRowSelectionInterval(trainPosition(tren), trainPosition(tren));
+	}
+	
+	public int getPosicion(int tren) {
+		int posicion = 0;
+		for(int i=0; i<trenes.size(); i++) {
+			if(trenes.get(i).getCodTren() == tren) {
+				posicion = i;
+				return posicion;
+			}
+		}
+		return posicion;
 	}
 }

@@ -1,8 +1,5 @@
 package view;
 
-import java.awt.BorderLayout;
-import java.awt.EventQueue;
-
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
@@ -14,8 +11,6 @@ import org.hibernate.Transaction;
 
 import hibernateutil.HibernateUtil;
 import model.TEstaciones;
-import model.TLineaEstacion;
-
 import javax.swing.GroupLayout;
 import javax.swing.GroupLayout.Alignment;
 import javax.swing.JLabel;
@@ -28,31 +23,14 @@ import java.awt.event.ActionEvent;
 
 public class VentanaModEstaciones extends JFrame {
 
+	private static final long serialVersionUID = 1L;
 	private JPanel contentPane;
 	private JTextField tfIdEstacion;
 	private JTextField tfNumAccesos;
 	private JTextField tfNumLinea;
 	private JTextField tfNumDestinos;
 	private JTextField tfNumViajes;
-	private TEstaciones estacion;
-	
-	/*
-	public static void main(String[] args) {
-		EventQueue.invokeLater(new Runnable() {
-			public void run() {
-				try {
-					VentanaModEstaciones frame = new VentanaModEstaciones();
-					frame.setVisible(true);
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			}
-		});
-	}*/
 
-	/**
-	 * Create the frame.
-	 */
 	public VentanaModEstaciones() {
 		setBounds(100, 100, 536, 203);
 		contentPane = new JPanel();
@@ -72,6 +50,7 @@ public class VentanaModEstaciones extends JFrame {
 				try {
 					TEstaciones estacion = session.load(TEstaciones.class, Integer.parseInt(tfIdEstacion.getText()));
 					llenarCampos(estacion);
+					session.close();
 				}catch(NumberFormatException nfe) {
 					JOptionPane.showMessageDialog(null, "Los Campos No estan llenos...");
 				}
@@ -97,6 +76,8 @@ public class VentanaModEstaciones extends JFrame {
 					tr.commit();
 					JOptionPane.showMessageDialog(null, "Campos modificados correctamente!!");
 					llenarCampos(estacion);
+					session.close();
+					sessionF.close();
 				}catch(NumberFormatException nfe) {
 					JOptionPane.showMessageDialog(null, "Los Campos No estan llenos...");
 				}

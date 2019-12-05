@@ -1,7 +1,5 @@
 package view;
 
-import java.awt.BorderLayout;
-import java.awt.EventQueue;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
@@ -20,7 +18,6 @@ import javax.swing.LayoutStyle.ComponentPlacement;
 import javax.swing.border.EmptyBorder;
 import javax.swing.table.DefaultTableModel;
 
-import org.hibernate.HibernateException;
 import org.hibernate.ObjectNotFoundException;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
@@ -28,7 +25,6 @@ import org.hibernate.Transaction;
 import org.hibernate.query.Query;
 
 import hibernateutil.HibernateUtil;
-import model.TTrenes;
 import model.TViajes;
 
 public class VentanaListarViajes extends JFrame {
@@ -41,22 +37,6 @@ public class VentanaListarViajes extends JFrame {
 	private JTextField tfOrigen;
 	private JTextField tfDestino;
 	private ArrayList<TViajes> viajes;
-	/**
-	 * Launch the application.
-	 */
-	public static void main(String[] args) {
-		EventQueue.invokeLater(new Runnable() {
-			public void run() {
-				try {
-					VentanaListarViajes frame = new VentanaListarViajes();
-					frame.setVisible(true);
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			}
-		});
-	}
-
 	
 	public VentanaListarViajes() {
 		setBounds(100, 100, 896, 451);
@@ -101,6 +81,7 @@ public class VentanaListarViajes extends JFrame {
 		}
 		
 		tr.commit();
+		session.close();
 		tVerTrenes.setModel(dtm);
 		scrollPane.setViewportView(tVerTrenes);
 		
@@ -112,7 +93,9 @@ public class VentanaListarViajes extends JFrame {
 				try {
 					TViajes viaje = session.load(TViajes.class, Integer.parseInt(tfCodViaje.getText()));
 					rellenarCampos(viaje);
-					tVerTrenes.setRowSelectionInterval(viaje.getCodViaje()-1, viaje.getCodViaje()-1);
+					int posicion = getPosicion(Integer.parseInt(tfCodViaje.getText()));
+					tVerTrenes.setRowSelectionInterval(posicion, posicion);
+					session.close();
 				}catch(ObjectNotFoundException onfe){
 					JOptionPane.showMessageDialog(null,"Ningun Viaje con ese código");
 				}catch(NumberFormatException nfe) {
@@ -128,55 +111,32 @@ public class VentanaListarViajes extends JFrame {
 				SessionFactory sessionF = HibernateUtil.getSessionFactory();
 				Session session = sessionF.openSession();
 				try {
-					
-					tfCodViaje.setText(String.valueOf((Integer.parseInt(tfCodViaje.getText()) + 1)));
-					TViajes viaje = session.load(TViajes.class, Integer.parseInt(tfCodViaje.getText()));
-					tVerTrenes.setRowSelectionInterval(viaje.getCodViaje()-1, viaje.getCodViaje()-1);
-					rellenarCampos(viaje);
-					
-				}catch (NumberFormatException nfe) {
+					int posicion = getPosicion(Integer.parseInt(tfCodViaje.getText()));
+					rellenarCampos(viajes.get(posicion + 1));
+					tVerTrenes.setRowSelectionInterval(posicion + 1, posicion + 1);
+					session.close();
+				}catch(IndexOutOfBoundsException iobe) {
+					mensajeNoRegistros();
+				}catch(NumberFormatException nfe) {
 					mensajeCampoCodigoVacio();
 				}
-				catch (IllegalArgumentException npe) {
-					mensajeNoRegistros();
-					tfCodViaje.setText(String.valueOf((Integer.parseInt(tfCodViaje.getText()) - 1)));
-				}
-				catch(ObjectNotFoundException infe) {
-					mensajeNoRegistros();
-					tfCodViaje.setText(String.valueOf((Integer.parseInt(tfCodViaje.getText()) - 1)));
-				}catch(HibernateException he) {
-					mensajeNoRegistros();
-					tfCodViaje.setText(String.valueOf((Integer.parseInt(tfCodViaje.getText()) - 1)));
-				}
-				
 			}
 		});
 		
 		JButton btPrevious = new JButton("<");
 		btPrevious.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-
 				SessionFactory sessionF = HibernateUtil.getSessionFactory();
 				Session session = sessionF.openSession();
 				try {
-					
-					tfCodViaje.setText(String.valueOf((Integer.parseInt(tfCodViaje.getText()) - 1)));
-					TViajes viaje = session.load(TViajes.class, Integer.parseInt(tfCodViaje.getText()));
-					tVerTrenes.setRowSelectionInterval(viaje.getCodViaje()-1, viaje.getCodViaje()-1);
-					rellenarCampos(viaje);
-				}catch (NumberFormatException nfe) {
+					int posicion = getPosicion(Integer.parseInt(tfCodViaje.getText()));
+					rellenarCampos(viajes.get(posicion + 1));
+					tVerTrenes.setRowSelectionInterval(posicion + 1, posicion + 1);
+					session.close();
+				}catch(IndexOutOfBoundsException iobe) {
+					mensajeNoRegistros();
+				}catch(NumberFormatException nfe) {
 					mensajeCampoCodigoVacio();
-					tfCodViaje.setText(String.valueOf((Integer.parseInt(tfCodViaje.getText()) + 1)));
-				}
-				catch(ObjectNotFoundException infe) {
-					mensajeNoRegistros();
-					tfCodViaje.setText(String.valueOf((Integer.parseInt(tfCodViaje.getText()) + 1)));
-				}catch(IllegalArgumentException iae) {
-					mensajeNoRegistros();
-					tfCodViaje.setText(String.valueOf((Integer.parseInt(tfCodViaje.getText()) + 1)));
-				}catch(HibernateException he) {
-					mensajeNoRegistros();
-					tfCodViaje.setText(String.valueOf((Integer.parseInt(tfCodViaje.getText()) + 1)));
 				}
 			}
 		});
@@ -298,4 +258,14 @@ public class VentanaListarViajes extends JFrame {
 		tVerTrenes.setRowSelectionInterval(tripPosition(viajes), tripPosition(viajes));
 	}
 
+	public int getPosicion(int viaje) {
+		int posicion = 0;
+		for(int i=0; i<viajes.size(); i++) {
+			if(viajes.get(i).getCodViaje() == viaje) {
+				posicion = i;
+				return posicion;
+			}
+		}
+		return posicion;
+	}
 }

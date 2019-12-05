@@ -1,7 +1,5 @@
 package view;
 
-import java.awt.BorderLayout;
-import java.awt.EventQueue;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
@@ -20,7 +18,6 @@ import javax.swing.LayoutStyle.ComponentPlacement;
 import javax.swing.border.EmptyBorder;
 import javax.swing.table.DefaultTableModel;
 
-import org.hibernate.HibernateException;
 import org.hibernate.ObjectNotFoundException;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
@@ -29,7 +26,6 @@ import org.hibernate.query.Query;
 
 import hibernateutil.HibernateUtil;
 import model.TAccesos;
-import model.TLineas;
 
 public class VentanaListarAccesos extends JFrame {
 
@@ -40,22 +36,6 @@ public class VentanaListarAccesos extends JFrame {
 	private JTextField tfDescripcion;
 	private ArrayList<TAccesos> accesos;
 	private JTextField tfCodEstacion;
-	/**
-	 * Launch the application.
-	 */
-	public static void main(String[] args) {
-		EventQueue.invokeLater(new Runnable() {
-			public void run() {
-				try {
-					VentanaListarAccesos frame = new VentanaListarAccesos();
-					frame.setVisible(true);
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			}
-		});
-	}
-
 	
 	public VentanaListarAccesos() {
 		setBounds(100, 100, 896, 451);
@@ -90,6 +70,7 @@ public class VentanaListarAccesos extends JFrame {
 		}
 		
 		tr.commit();
+		session.close();
 		tVerTrenes.setModel(dtm);
 		scrollPane.setViewportView(tVerTrenes);
 		
@@ -101,7 +82,9 @@ public class VentanaListarAccesos extends JFrame {
 				try {
 					TAccesos acceso = session.load(TAccesos.class, Integer.parseInt(tfCodAcceso.getText()));
 					rellenarCampos(acceso);
-					tVerTrenes.setRowSelectionInterval(acceso.getCodAcceso()-1, acceso.getCodAcceso()-1);
+					int posicion = getPosicion(Integer.parseInt(tfCodAcceso.getText()));
+					tVerTrenes.setRowSelectionInterval(posicion, posicion);
+					session.close();
 				}catch(ObjectNotFoundException onfe){
 					mensajeCampoCodigoVacio();
 				}catch(NumberFormatException nfe) {
@@ -117,27 +100,16 @@ public class VentanaListarAccesos extends JFrame {
 				SessionFactory sessionF = HibernateUtil.getSessionFactory();
 				Session session = sessionF.openSession();
 				try {
-					
-					tfCodAcceso.setText(String.valueOf((Integer.parseInt(tfCodAcceso.getText()) + 1)));
-					TAccesos acceso = session.load(TAccesos.class, Integer.parseInt(tfCodAcceso.getText()));
-					tVerTrenes.setRowSelectionInterval(acceso.getCodAcceso()-1, acceso.getCodAcceso()-1);
-					rellenarCampos(acceso);
-					
-				}catch(NumberFormatException nfe){
+					int posicion = getPosicion(Integer.parseInt(tfCodAcceso.getText()));
+					rellenarCampos(accesos.get(posicion + 1));
+					tVerTrenes.setRowSelectionInterval(posicion + 1, posicion +1);
+					session.close();
+				}catch(IndexOutOfBoundsException iobe) {
+					mensajeNoRegistros();
+				}
+				catch(NumberFormatException nfe){
 					mensajeCampoCodigoVacio();
 				}
-				catch (IllegalArgumentException npe) {
-					mensajeNoRegistros();
-					tfCodAcceso.setText(String.valueOf((Integer.parseInt(tfCodAcceso.getText()) - 1)));
-				}
-				catch(ObjectNotFoundException infe) {
-					mensajeNoRegistros();
-					tfCodAcceso.setText(String.valueOf((Integer.parseInt(tfCodAcceso.getText()) - 1)));
-				}catch(HibernateException he) {
-					mensajeNoRegistros();
-					tfCodAcceso.setText(String.valueOf((Integer.parseInt(tfCodAcceso.getText()) - 1)));
-				}
-				
 			}
 		});
 		
@@ -149,22 +121,14 @@ public class VentanaListarAccesos extends JFrame {
 				Session session = sessionF.openSession();
 				try {
 					
-					tfCodAcceso.setText(String.valueOf((Integer.parseInt(tfCodAcceso.getText()) - 1)));
-					TAccesos linea = session.load(TAccesos.class, Integer.parseInt(tfCodAcceso.getText()));
-					tVerTrenes.setRowSelectionInterval(linea.getCodAcceso()-1, linea.getCodAcceso()-1);
-					rellenarCampos(linea);
+					int posicion = getPosicion(Integer.parseInt(tfCodAcceso.getText()));
+					rellenarCampos(accesos.get(posicion - 1));
+					tVerTrenes.setRowSelectionInterval(posicion - 1, posicion - 1);
+					session.close();
+				}catch(IndexOutOfBoundsException iobe) {
+					mensajeNoRegistros();
 				}catch (NumberFormatException nfe) {
 					mensajeCampoCodigoVacio();
-					tfCodAcceso.setText(String.valueOf((Integer.parseInt(tfCodAcceso.getText()) + 1)));
-				}
-				catch(ObjectNotFoundException infe) {
-					mensajeNoRegistros();
-					tfCodAcceso.setText(String.valueOf((Integer.parseInt(tfCodAcceso.getText()) + 1)));
-				}catch(IllegalArgumentException iae) {
-					mensajeNoRegistros();
-					tfCodAcceso.setText(String.valueOf((Integer.parseInt(tfCodAcceso.getText()) + 1)));
-				}catch(HibernateException he) {
-					mensajeNoRegistros();
 					tfCodAcceso.setText(String.valueOf((Integer.parseInt(tfCodAcceso.getText()) + 1)));
 				}
 			}
@@ -288,5 +252,15 @@ public class VentanaListarAccesos extends JFrame {
 	
 	public void seleccionarFila(TAccesos acceso) {
 		tVerTrenes.setRowSelectionInterval(tripPosition(acceso), tripPosition(acceso));
+	}
+	public int getPosicion(int acceso) {
+		int posicion = 0;
+		for(int i=0; i<accesos.size(); i++) {
+			if(accesos.get(i).getCodAcceso() == acceso) {
+				posicion = i;
+				return posicion;
+			}
+		}
+		return posicion;
 	}
 }

@@ -1,48 +1,27 @@
 package view;
 
-import java.awt.Color;
-import java.awt.EventQueue;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import javax.swing.BorderFactory;
+import java.awt.event.WindowEvent;
+import java.awt.event.WindowListener;
+
 import javax.swing.GroupLayout;
 import javax.swing.JFrame;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.GroupLayout.Alignment;
-import javax.swing.border.Border;
 import javax.swing.border.EmptyBorder;
 import javax.swing.JMenu;
 
-public class NewVentanaPrincipal extends JFrame {
+public class NewVentanaPrincipal extends JFrame implements WindowListener{
 
 	private static final long serialVersionUID = 1L;
 	private JPanel contentPane;
 
-	/**
-	 * Launch the application.
-	 */
-	public static void main(String[] args) {
-		EventQueue.invokeLater(new Runnable() {
-			public void run() {
-				try {
-					NewVentanaPrincipal frame = new NewVentanaPrincipal();
-					frame.setVisible(true);
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			}
-		});
-	}
-
-	/**
-	 * Create the frame.
-	 */
 	public NewVentanaPrincipal() {
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 450, 300);
-		Border border = BorderFactory.createLineBorder(Color.black, 1);
 		JMenuBar menuBar = new JMenuBar();
 		
 		setJMenuBar(menuBar);
@@ -165,7 +144,7 @@ public class NewVentanaPrincipal extends JFrame {
 			
 			public void actionPerformed(ActionEvent arg0) {
 				VentanaModEstaciones modEstacion = new VentanaModEstaciones();
-				modEstacion.setTitle("Encontrar accesos");
+				modEstacion.setTitle("Modificar Estación");
 				modEstacion.setVisible(true);
 				modEstacion.setDefaultCloseOperation(HIDE_ON_CLOSE);
 				
@@ -184,6 +163,43 @@ public class NewVentanaPrincipal extends JFrame {
 				.addGap(0, 260, Short.MAX_VALUE)
 		);
 		contentPane.setLayout(gl_contentPane);
+		
+		
+	}
+
+	public void windowActivated(WindowEvent arg0) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public void windowClosed(WindowEvent arg0) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public void windowClosing(WindowEvent arg0) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public void windowDeactivated(WindowEvent arg0) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public void windowDeiconified(WindowEvent arg0) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public void windowIconified(WindowEvent arg0) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public void windowOpened(WindowEvent arg0) {
+		// TODO Auto-generated method stub
+		
 	}
 
 }

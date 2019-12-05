@@ -1,7 +1,5 @@
 package view;
 
-import java.awt.BorderLayout;
-import java.awt.EventQueue;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
@@ -20,7 +18,6 @@ import javax.swing.LayoutStyle.ComponentPlacement;
 import javax.swing.border.EmptyBorder;
 import javax.swing.table.DefaultTableModel;
 
-import org.hibernate.HibernateException;
 import org.hibernate.ObjectNotFoundException;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
@@ -40,22 +37,6 @@ public class VentanaListarCocheras extends JFrame {
 	private JTextField tfNombre;
 	private ArrayList<TCocheras> cocheras;
 	private JTextField tfDireccion;
-	/**
-	 * Launch the application.
-	 */
-	public static void main(String[] args) {
-		EventQueue.invokeLater(new Runnable() {
-			public void run() {
-				try {
-					VentanaListarCocheras frame = new VentanaListarCocheras();
-					frame.setVisible(true);
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			}
-		});
-	}
-
 	
 	public VentanaListarCocheras() {
 		setBounds(100, 100, 896, 451);
@@ -90,6 +71,7 @@ public class VentanaListarCocheras extends JFrame {
 		}
 		
 		tr.commit();
+		session.close();
 		tVerTrenes.setModel(dtm);
 		scrollPane.setViewportView(tVerTrenes);
 		
@@ -101,7 +83,9 @@ public class VentanaListarCocheras extends JFrame {
 				try {
 					TCocheras cochera = session.load(TCocheras.class, Integer.parseInt(tfCodCochera.getText()));
 					rellenarCampos(cochera);
-					tVerTrenes.setRowSelectionInterval(cochera.getCodCochera()-1, cochera.getCodCochera()-1);
+					int posicion = getPosicion(Integer.parseInt(tfCodCochera.getText()));
+					tVerTrenes.setRowSelectionInterval(posicion, posicion);
+					session.close();
 				}catch(ObjectNotFoundException onfe){
 					mensajeCampoCodigoVacio();
 				}catch(NumberFormatException nfe) {
@@ -117,27 +101,15 @@ public class VentanaListarCocheras extends JFrame {
 				SessionFactory sessionF = HibernateUtil.getSessionFactory();
 				Session session = sessionF.openSession();
 				try {
-					
-					tfCodCochera.setText(String.valueOf((Integer.parseInt(tfCodCochera.getText()) + 1)));
-					TCocheras acceso = session.load(TCocheras.class, Integer.parseInt(tfCodCochera.getText()));
-					tVerTrenes.setRowSelectionInterval(acceso.getCodCochera()-1, acceso.getCodCochera()-1);
-					rellenarCampos(acceso);
-					
-				}catch(NumberFormatException nfe){
+					int posicion = getPosicion(Integer.parseInt(tfCodCochera.getText()));
+					rellenarCampos(cocheras.get(posicion + 1));
+					tVerTrenes.setRowSelectionInterval(posicion + 1, posicion +1);
+					session.close();
+				}catch(IndexOutOfBoundsException iobe) {
+					mensajeNoRegistros();
+				}catch(NumberFormatException nfe) {
 					mensajeCampoCodigoVacio();
 				}
-				catch (IllegalArgumentException npe) {
-					mensajeNoRegistros();
-					tfCodCochera.setText(String.valueOf((Integer.parseInt(tfCodCochera.getText()) - 1)));
-				}
-				catch(ObjectNotFoundException infe) {
-					mensajeNoRegistros();
-					tfCodCochera.setText(String.valueOf((Integer.parseInt(tfCodCochera.getText()) - 1)));
-				}catch(HibernateException he) {
-					mensajeNoRegistros();
-					tfCodCochera.setText(String.valueOf((Integer.parseInt(tfCodCochera.getText()) - 1)));
-				}
-				
 			}
 		});
 		
@@ -149,23 +121,14 @@ public class VentanaListarCocheras extends JFrame {
 				Session session = sessionF.openSession();
 				try {
 					
-					tfCodCochera.setText(String.valueOf((Integer.parseInt(tfCodCochera.getText()) - 1)));
-					TCocheras linea = session.load(TCocheras.class, Integer.parseInt(tfCodCochera.getText()));
-					tVerTrenes.setRowSelectionInterval(linea.getCodCochera()-1, linea.getCodCochera()-1);
-					rellenarCampos(linea);
-				}catch (NumberFormatException nfe) {
+					int posicion = getPosicion(Integer.parseInt(tfCodCochera.getText()));
+					rellenarCampos(cocheras.get(posicion - 1));
+					tVerTrenes.setRowSelectionInterval(posicion - 1, posicion - 1);
+					session.close();
+				}catch(IndexOutOfBoundsException iobe) {
+					mensajeNoRegistros();
+				}catch(NumberFormatException nfe) {
 					mensajeCampoCodigoVacio();
-					tfCodCochera.setText(String.valueOf((Integer.parseInt(tfCodCochera.getText()) + 1)));
-				}
-				catch(ObjectNotFoundException infe) {
-					mensajeNoRegistros();
-					tfCodCochera.setText(String.valueOf((Integer.parseInt(tfCodCochera.getText()) + 1)));
-				}catch(IllegalArgumentException iae) {
-					mensajeNoRegistros();
-					tfCodCochera.setText(String.valueOf((Integer.parseInt(tfCodCochera.getText()) + 1)));
-				}catch(HibernateException he) {
-					mensajeNoRegistros();
-					tfCodCochera.setText(String.valueOf((Integer.parseInt(tfCodCochera.getText()) + 1)));
 				}
 			}
 		});
@@ -283,6 +246,16 @@ public class VentanaListarCocheras extends JFrame {
 	
 	public void seleccionarFila(TCocheras cochera) {
 		tVerTrenes.setRowSelectionInterval(tripPosition(cochera), tripPosition(cochera));
+	}
+	public int getPosicion(int cochera) {
+		int posicion = 0;
+		for(int i=0; i<cocheras.size(); i++) {
+			if(cocheras.get(i).getCodCochera() == cochera) {
+				posicion = i;
+				return posicion;
+			}
+		}
+		return posicion;
 	}
 
 }

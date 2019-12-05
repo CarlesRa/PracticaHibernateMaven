@@ -1,6 +1,5 @@
 package view;
 
-import java.awt.EventQueue;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -29,34 +28,12 @@ import model.TLineas;
 
 public class NewVentanaInsertRegistros extends JFrame {
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 1L;
 	private JPanel contentPane;
 	private JTextField tfNumLinea;
 	private JTextField tfNumEstacion;
 	private JTextField tfOrden;
 
-	/**
-	 * Launch the application.
-	 */
-	public static void main(String[] args) {
-		EventQueue.invokeLater(new Runnable() {
-			public void run() {
-				try {
-					NewVentanaInsertRegistros frame = new NewVentanaInsertRegistros();
-					frame.setVisible(true);
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			}
-		});
-	}
-
-	/**
-	 * Create the frame.
-	 */
 	public NewVentanaInsertRegistros() {
 		setBounds(100, 100, 450, 300);
 		contentPane = new JPanel();
@@ -94,6 +71,8 @@ public class NewVentanaInsertRegistros extends JFrame {
 					TLineaEstacion tle = new TLineaEstacion(idLineaEstacion, null, null,Integer.valueOf(tfOrden.getText()));
 					session.save(tle);
 					tr.commit();
+					session.close();
+					sessionF.close();
 					tpNotificaciones.setText("Insertado correctamente!!");
 				}catch (NumberFormatException nfe) {
 					tpNotificaciones.setText("Dato erróneo o nulo");

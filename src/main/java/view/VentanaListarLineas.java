@@ -1,7 +1,5 @@
 package view;
 
-import java.awt.BorderLayout;
-import java.awt.EventQueue;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
@@ -20,7 +18,6 @@ import javax.swing.LayoutStyle.ComponentPlacement;
 import javax.swing.border.EmptyBorder;
 import javax.swing.table.DefaultTableModel;
 
-import org.hibernate.HibernateException;
 import org.hibernate.ObjectNotFoundException;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
@@ -28,7 +25,6 @@ import org.hibernate.Transaction;
 import org.hibernate.query.Query;
 
 import hibernateutil.HibernateUtil;
-import model.TEstaciones;
 import model.TLineas;
 
 public class VentanaListarLineas extends JFrame {
@@ -39,22 +35,6 @@ public class VentanaListarLineas extends JFrame {
 	private JTextField tfCodLinea;
 	private JTextField tfNombre;
 	private ArrayList<TLineas> lineas;
-	/**
-	 * Launch the application.
-	 */
-	public static void main(String[] args) {
-		EventQueue.invokeLater(new Runnable() {
-			public void run() {
-				try {
-					VentanaListarLineas frame = new VentanaListarLineas();
-					frame.setVisible(true);
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			}
-		});
-	}
-
 	
 	public VentanaListarLineas() {
 		setBounds(100, 100, 896, 451);
@@ -89,6 +69,7 @@ public class VentanaListarLineas extends JFrame {
 		}
 		
 		tr.commit();
+		session.close();
 		tVerTrenes.setModel(dtm);
 		scrollPane.setViewportView(tVerTrenes);
 		
@@ -100,7 +81,9 @@ public class VentanaListarLineas extends JFrame {
 				try {
 					TLineas linea = session.load(TLineas.class, Integer.parseInt(tfCodLinea.getText()));
 					rellenarCampos(linea);
-					tVerTrenes.setRowSelectionInterval(linea.getCodLinea()-1, linea.getCodLinea()-1);
+					int posicion = getPosicion(Integer.parseInt(tfCodLinea.getText()));
+					tVerTrenes.setRowSelectionInterval(posicion, posicion);
+					session.close();
 				}catch(ObjectNotFoundException onfe){
 					mensajeCampoCodigoVacio();
 				}catch(NumberFormatException nfe) {
@@ -117,26 +100,15 @@ public class VentanaListarLineas extends JFrame {
 				Session session = sessionF.openSession();
 				try {
 					
-					tfCodLinea.setText(String.valueOf((Integer.parseInt(tfCodLinea.getText()) + 1)));
-					TLineas linea = session.load(TLineas.class, Integer.parseInt(tfCodLinea.getText()));
-					tVerTrenes.setRowSelectionInterval(linea.getCodLinea()-1, linea.getCodLinea()-1);
-					rellenarCampos(linea);
-					
-				}catch(NumberFormatException nfe){
+					int posicion = getPosicion(Integer.parseInt(tfCodLinea.getText()));
+					rellenarCampos(lineas.get(posicion + 1));
+					tVerTrenes.setRowSelectionInterval(posicion + 1, posicion + 1);
+					session.close();
+				}catch(IndexOutOfBoundsException iobe) {
+					mensajeNoRegistros();
+				}catch(NumberFormatException nfe) {
 					mensajeCampoCodigoVacio();
 				}
-				catch (IllegalArgumentException npe) {
-					mensajeNoRegistros();
-					tfCodLinea.setText(String.valueOf((Integer.parseInt(tfCodLinea.getText()) - 1)));
-				}
-				catch(ObjectNotFoundException infe) {
-					mensajeNoRegistros();
-					tfCodLinea.setText(String.valueOf((Integer.parseInt(tfCodLinea.getText()) - 1)));
-				}catch(HibernateException he) {
-					mensajeNoRegistros();
-					tfCodLinea.setText(String.valueOf((Integer.parseInt(tfCodLinea.getText()) - 1)));
-				}
-				
 			}
 		});
 		
@@ -147,24 +119,14 @@ public class VentanaListarLineas extends JFrame {
 				SessionFactory sessionF = HibernateUtil.getSessionFactory();
 				Session session = sessionF.openSession();
 				try {
-					
-					tfCodLinea.setText(String.valueOf((Integer.parseInt(tfCodLinea.getText()) - 1)));
-					TLineas linea = session.load(TLineas.class, Integer.parseInt(tfCodLinea.getText()));
-					tVerTrenes.setRowSelectionInterval(linea.getCodLinea()-1, linea.getCodLinea()-1);
-					rellenarCampos(linea);
-				}catch (NumberFormatException nfe) {
+					int posicion = getPosicion(Integer.parseInt(tfCodLinea.getText()));
+					rellenarCampos(lineas.get(posicion - 1));
+					tVerTrenes.setRowSelectionInterval(posicion - 1, posicion - 1);
+					session.close();
+				}catch(IndexOutOfBoundsException iobe) {
+					mensajeNoRegistros();
+				}catch(NumberFormatException nfe) {
 					mensajeCampoCodigoVacio();
-					tfCodLinea.setText(String.valueOf((Integer.parseInt(tfCodLinea.getText()) + 1)));
-				}
-				catch(ObjectNotFoundException infe) {
-					mensajeNoRegistros();
-					tfCodLinea.setText(String.valueOf((Integer.parseInt(tfCodLinea.getText()) + 1)));
-				}catch(IllegalArgumentException iae) {
-					mensajeNoRegistros();
-					tfCodLinea.setText(String.valueOf((Integer.parseInt(tfCodLinea.getText()) + 1)));
-				}catch(HibernateException he) {
-					mensajeNoRegistros();
-					tfCodLinea.setText(String.valueOf((Integer.parseInt(tfCodLinea.getText()) + 1)));
 				}
 			}
 		});
@@ -269,5 +231,14 @@ public class VentanaListarLineas extends JFrame {
 	public void seleccionarFila(TLineas linea) {
 		tVerTrenes.setRowSelectionInterval(tripPosition(linea), tripPosition(linea));
 	}
-
+	public int getPosicion(int linea) {
+		int posicion = 0;
+		for(int i=0; i<lineas.size(); i++) {
+			if(lineas.get(i).getCodLinea() == linea) {
+				posicion = i;
+				return posicion;
+			}
+		}
+		return posicion;
+	}
 }
