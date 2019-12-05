@@ -1,5 +1,7 @@
 package view;
 
+import java.awt.BorderLayout;
+import java.awt.EventQueue;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
@@ -27,12 +29,12 @@ import org.hibernate.query.Query;
 import hibernateutil.HibernateUtil;
 import model.TEstaciones;
 
-public class VentanaListarEstaciones extends JFrame {
+public class NewVentanaListarEstaciones extends JFrame {
 
 	private static final long serialVersionUID = 1L;
 	private JPanel contentPane;
 	private JTable tVerTrenes;
-	private JTextField tfCodEstacion;
+	private JTextField tfCod;
 	private JTextField tfNombre;
 	private JTextField tfDireccion;
 	private JTextField tfAcceso;
@@ -41,7 +43,7 @@ public class VentanaListarEstaciones extends JFrame {
 	private JTextField tfDestinos;
 	private JTextField tfProcedencias;
 	
-	public VentanaListarEstaciones() {
+	public NewVentanaListarEstaciones() {
 		setBounds(100, 100, 896, 451);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
@@ -51,8 +53,8 @@ public class VentanaListarEstaciones extends JFrame {
 		
 		JLabel lblCodTren = new JLabel("Cod. ESTACIÓN:");
 		
-		tfCodEstacion = new JTextField();
-		tfCodEstacion.setColumns(10);
+		tfCod = new JTextField();
+		tfCod.setColumns(10);
 		
 		JLabel lblNombre = new JLabel("NOMBRE:");
 		
@@ -94,10 +96,13 @@ public class VentanaListarEstaciones extends JFrame {
 				SessionFactory sessionF = HibernateUtil.getSessionFactory();
 				Session session = sessionF.openSession();
 				try {
-					TEstaciones estacion = session.load(TEstaciones.class, Integer.parseInt(tfCodEstacion.getText()));
-					int posicion = getPosicion(Integer.parseInt(tfCodEstacion.getText()));
-					rellenarCampos(estacion);
-					tVerTrenes.setRowSelectionInterval(posicion, posicion);
+					TEstaciones estacion = session.load(TEstaciones.class, Integer.parseInt(tfCod.getText()));
+					if(Integer.parseInt(tfCod.getText()) == estacion.getCodEstacion()) {
+						System.out.println("Entro if estacion " + estacion);
+						int posicion = getPosicion(Integer.parseInt(tfCod.getText()));
+						rellenarCampos(estacion);
+						tVerTrenes.setRowSelectionInterval(posicion, posicion);
+					}
 					session.close();
 				}catch(ObjectNotFoundException onfe){
 					mensajeCampoCodigoVacio();
@@ -114,7 +119,7 @@ public class VentanaListarEstaciones extends JFrame {
 				SessionFactory sessionF = HibernateUtil.getSessionFactory();
 				Session session = sessionF.openSession();
 				try {
-					int posicion = getPosicion(Integer.parseInt(tfCodEstacion.getText()));
+					int posicion = getPosicion(Integer.parseInt(tfCod.getText()));
 					rellenarCampos(estaciones.get(posicion + 1));
 					tVerTrenes.setRowSelectionInterval(posicion + 1, posicion + 1);
 					session.close();
@@ -133,7 +138,7 @@ public class VentanaListarEstaciones extends JFrame {
 				SessionFactory sessionF = HibernateUtil.getSessionFactory();
 				Session session = sessionF.openSession();
 				try {	
-					int posicion = getPosicion(Integer.parseInt(tfCodEstacion.getText()));
+					int posicion = getPosicion(Integer.parseInt(tfCod.getText()));
 					rellenarCampos(estaciones.get(posicion - 1));
 					tVerTrenes.setRowSelectionInterval(posicion - 1, posicion - 1);
 					session.close();
@@ -206,7 +211,7 @@ public class VentanaListarEstaciones extends JFrame {
 									.addGap(102)
 									.addComponent(lblCodTren)
 									.addPreferredGap(ComponentPlacement.RELATED)
-									.addComponent(tfCodEstacion, GroupLayout.PREFERRED_SIZE, 49, GroupLayout.PREFERRED_SIZE)))
+									.addComponent(tfCod, GroupLayout.PREFERRED_SIZE, 49, GroupLayout.PREFERRED_SIZE)))
 							.addGap(48)
 							.addGroup(gl_contentPane.createParallelGroup(Alignment.LEADING)
 								.addGroup(gl_contentPane.createSequentialGroup()
@@ -243,7 +248,7 @@ public class VentanaListarEstaciones extends JFrame {
 							.addComponent(btNext))
 						.addGroup(gl_contentPane.createParallelGroup(Alignment.BASELINE)
 							.addComponent(lblCodTren)
-							.addComponent(tfCodEstacion, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+							.addComponent(tfCod, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
 							.addComponent(btnLocalizar)))
 					.addGap(18)
 					.addGroup(gl_contentPane.createParallelGroup(Alignment.LEADING)
@@ -274,7 +279,7 @@ public class VentanaListarEstaciones extends JFrame {
 	public void rellenarCampos(TEstaciones estacion) {
 		try {
 			
-		tfCodEstacion.setText(String.valueOf(estacion.getCodEstacion()));
+		tfCod.setText(String.valueOf(estacion.getCodEstacion()));
 		tfNombre.setText(estacion.getNombre());
 		tfDireccion.setText(String.valueOf(estacion.getDireccion()));
 		tfAcceso.setText(String.valueOf(estacion.getNumaccesos()));

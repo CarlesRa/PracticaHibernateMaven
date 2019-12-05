@@ -39,7 +39,7 @@ public class VentanaListarViajes extends JFrame {
 	private ArrayList<TViajes> viajes;
 	
 	public VentanaListarViajes() {
-		setBounds(100, 100, 896, 451);
+		setBounds(100, 100, 897, 467);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(contentPane);
@@ -93,8 +93,10 @@ public class VentanaListarViajes extends JFrame {
 				try {
 					TViajes viaje = session.load(TViajes.class, Integer.parseInt(tfCodViaje.getText()));
 					rellenarCampos(viaje);
-					int posicion = getPosicion(Integer.parseInt(tfCodViaje.getText()));
-					tVerTrenes.setRowSelectionInterval(posicion, posicion);
+					if(viaje.getCodViaje() == Integer.parseInt(tfCodViaje.getText())) {
+						int posicion = getPosicion(Integer.parseInt(tfCodViaje.getText()));
+						tVerTrenes.setRowSelectionInterval(posicion, posicion);
+					}
 					session.close();
 				}catch(ObjectNotFoundException onfe){
 					JOptionPane.showMessageDialog(null,"Ningun Viaje con ese código");
@@ -130,8 +132,8 @@ public class VentanaListarViajes extends JFrame {
 				Session session = sessionF.openSession();
 				try {
 					int posicion = getPosicion(Integer.parseInt(tfCodViaje.getText()));
-					rellenarCampos(viajes.get(posicion + 1));
-					tVerTrenes.setRowSelectionInterval(posicion + 1, posicion + 1);
+					rellenarCampos(viajes.get(posicion - 1));
+					tVerTrenes.setRowSelectionInterval(posicion - 1, posicion - 1);
 					session.close();
 				}catch(IndexOutOfBoundsException iobe) {
 					mensajeNoRegistros();

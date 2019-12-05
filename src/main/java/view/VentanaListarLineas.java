@@ -81,8 +81,10 @@ public class VentanaListarLineas extends JFrame {
 				try {
 					TLineas linea = session.load(TLineas.class, Integer.parseInt(tfCodLinea.getText()));
 					rellenarCampos(linea);
-					int posicion = getPosicion(Integer.parseInt(tfCodLinea.getText()));
-					tVerTrenes.setRowSelectionInterval(posicion, posicion);
+					if (linea.getCodLinea() == Integer.parseInt(tfCodLinea.getText())) {
+						int posicion = getPosicion(Integer.parseInt(tfCodLinea.getText()));
+						tVerTrenes.setRowSelectionInterval(posicion, posicion);
+					}
 					session.close();
 				}catch(ObjectNotFoundException onfe){
 					mensajeCampoCodigoVacio();

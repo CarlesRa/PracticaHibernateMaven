@@ -82,8 +82,10 @@ public class VentanaListarAccesos extends JFrame {
 				try {
 					TAccesos acceso = session.load(TAccesos.class, Integer.parseInt(tfCodAcceso.getText()));
 					rellenarCampos(acceso);
-					int posicion = getPosicion(Integer.parseInt(tfCodAcceso.getText()));
-					tVerTrenes.setRowSelectionInterval(posicion, posicion);
+					if(acceso.getCodAcceso() == Integer.parseInt(tfCodAcceso.getText())) {
+						int posicion = getPosicion(Integer.parseInt(tfCodAcceso.getText()));
+						tVerTrenes.setRowSelectionInterval(posicion, posicion);
+					}				
 					session.close();
 				}catch(ObjectNotFoundException onfe){
 					mensajeCampoCodigoVacio();

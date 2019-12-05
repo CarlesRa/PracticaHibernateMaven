@@ -3,6 +3,7 @@ package view;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
 
 import javax.persistence.PersistenceException;
 import javax.swing.GroupLayout;
@@ -18,13 +19,16 @@ import javax.swing.border.EmptyBorder;
 
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
+import org.hibernate.Transaction;
 import org.hibernate.exception.ConstraintViolationException;
+import org.hibernate.query.Query;
 
 import hibernateutil.HibernateUtil;
 import model.TEstaciones;
 import model.TLineaEstacion;
 import model.TLineaEstacionId;
 import model.TLineas;
+import model.TViajes;
 
 public class NewVentanaInsertRegistros extends JFrame {
 
@@ -33,7 +37,7 @@ public class NewVentanaInsertRegistros extends JFrame {
 	private JTextField tfNumLinea;
 	private JTextField tfNumEstacion;
 	private JTextField tfOrden;
-
+	private ArrayList<TLineaEstacion> lineas;
 	public NewVentanaInsertRegistros() {
 		setBounds(100, 100, 450, 300);
 		contentPane = new JPanel();
@@ -54,6 +58,12 @@ public class NewVentanaInsertRegistros extends JFrame {
 		
 		tfOrden = new JTextField();
 		tfOrden.setColumns(10);
+		Session session = HibernateUtil.getSessionFactory().openSession();
+		Transaction tr = session.beginTransaction();
+		
+
+		Query<TLineaEstacion> query = session.createQuery("from TLineaEstacion");
+		lineas =(ArrayList<TLineaEstacion>) query.list();
 		
 		JLabel lblNuevaLnea = new JLabel("Nueva Línea");
 		lblNuevaLnea.setFont(new Font("Dialog", Font.BOLD, 24));
@@ -69,11 +79,17 @@ public class NewVentanaInsertRegistros extends JFrame {
 					TEstaciones estacion = session.load(TEstaciones.class, Integer.valueOf(tfNumEstacion.getText()));
 					TLineaEstacionId idLineaEstacion = new TLineaEstacionId(linea.getCodLinea(),estacion.getCodEstacion());
 					TLineaEstacion tle = new TLineaEstacion(idLineaEstacion, null, null,Integer.valueOf(tfOrden.getText()));
-					session.save(tle);
-					tr.commit();
-					session.close();
-					sessionF.close();
-					tpNotificaciones.setText("Insertado correctamente!!");
+					boolean esCorrecto = esOrdenCorrecto(Integer.valueOf(tfNumLinea.getText())
+							, Integer.valueOf(tfNumEstacion.getText()), Integer.parseInt(tfOrden.getText()));
+					if(esCorrecto) {
+						session.save(tle);
+						tr.commit();
+						tpNotificaciones.setText("Insertado correctamente!!");
+					}
+					else {
+						tpNotificaciones.setText("Orden incorrecto!!");
+					}
+					
 				}catch (NumberFormatException nfe) {
 					tpNotificaciones.setText("Dato erróneo o nulo");
 				}
@@ -138,4 +154,23 @@ public class NewVentanaInsertRegistros extends JFrame {
 		contentPane.setLayout(gl_contentPane);
 	}
 
+	public boolean esOrdenCorrecto(int codLinea, int codEstacion, int orden) {
+		ArrayList<TLineaEstacion> lineasFiltradas = new ArrayList<TLineaEstacion>();
+		int contador = 0;
+		for(int i=0; i<lineas.size(); i++) {
+			if(lineas.get(i).getId().getCodLinea() == codLinea) {
+				lineasFiltradas.add(lineas.get(i));
+			}
+		}
+		for(int i=0; i<lineasFiltradas.size(); i++) {
+			if(lineasFiltradas.get(i).getOrden() == orden) {
+				contador++;
+			}
+		}
+		if(contador > 0) {
+			return false;
+		}
+		else
+		return true;
+	}
 }

@@ -83,13 +83,17 @@ public class VentanaListarCocheras extends JFrame {
 				try {
 					TCocheras cochera = session.load(TCocheras.class, Integer.parseInt(tfCodCochera.getText()));
 					rellenarCampos(cochera);
-					int posicion = getPosicion(Integer.parseInt(tfCodCochera.getText()));
-					tVerTrenes.setRowSelectionInterval(posicion, posicion);
+					if(cochera.getCodCochera() == Integer.parseInt(tfCodCochera.getText())) {
+						int posicion = getPosicion(Integer.parseInt(tfCodCochera.getText()));
+						tVerTrenes.setRowSelectionInterval(posicion, posicion);
+					}
 					session.close();
 				}catch(ObjectNotFoundException onfe){
-					mensajeCampoCodigoVacio();
+					JOptionPane.showMessageDialog(null,"No exista cochera con ese ID");
 				}catch(NumberFormatException nfe) {
-					JOptionPane.showMessageDialog(null,"Dato Erroneo....");
+					mensajeCampoCodigoVacio();
+				}catch(NullPointerException npe) {
+					mensajeNoRegistros();
 				}
 			}
 		});

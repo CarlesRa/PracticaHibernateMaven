@@ -78,13 +78,15 @@ public class VentanaListarLineasEstacion extends JFrame {
 				try {
 					TLineaEstacion lineaEstacion = session.load(TLineaEstacion.class, new TLineaEstacionId(Integer.parseInt(tfCodLinea.getText()),Integer.parseInt(tfCodEstacion.getText())));
 					rellenarCampos(lineaEstacion);
-					int pos = getPosicion(Integer.parseInt(tfCodLinea.getText()), Integer.parseInt(tfCodEstacion.getText()));
-					tVerTrenes.setRowSelectionInterval(pos, pos);
+					if(lineaEstacion.getId().getCodLinea() == Integer.parseInt(tfCodLinea.getText()) && lineaEstacion.getId().getCodEstacion() == Integer.parseInt(tfCodEstacion.getText())) {
+						int pos = getPosicion(Integer.parseInt(tfCodLinea.getText()), Integer.parseInt(tfCodEstacion.getText()));
+						tVerTrenes.setRowSelectionInterval(pos, pos);
+					}
 					session.close();
 				}catch(ObjectNotFoundException onfe){
-					mensajeCampoCodigoVacio();
+					JOptionPane.showMessageDialog(null,"No existe lineaEstacion con ese id");
 				}catch(NumberFormatException nfe) {
-					JOptionPane.showMessageDialog(null,"Dato Erroneo....");
+					mensajeCampoCodigoVacio();
 				}
 			}
 		});

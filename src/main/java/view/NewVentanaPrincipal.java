@@ -37,7 +37,7 @@ public class NewVentanaPrincipal extends JFrame implements WindowListener{
 				NewVentanaListarTrenes verTrenes = new NewVentanaListarTrenes();
 				verTrenes.setTitle("Econtrar trenes");
 				verTrenes.setVisible(true);
-				verTrenes.setDefaultCloseOperation(HIDE_ON_CLOSE);
+				verTrenes.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 				
 			}
 		});
@@ -50,7 +50,7 @@ public class NewVentanaPrincipal extends JFrame implements WindowListener{
 				VentanaListarAccesos verAccesos = new VentanaListarAccesos();
 				verAccesos.setTitle("Encontrar accesos");
 				verAccesos.setVisible(true);
-				verAccesos.setDefaultCloseOperation(HIDE_ON_CLOSE);
+				verAccesos.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 				
 			}
 		});
@@ -63,7 +63,7 @@ public class NewVentanaPrincipal extends JFrame implements WindowListener{
 				VentanaListarLineas verLineas = new VentanaListarLineas();
 				verLineas.setTitle("Encontrar Lineas");
 				verLineas.setVisible(true);
-				verLineas.setDefaultCloseOperation(HIDE_ON_CLOSE);
+				verLineas.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 				
 			}
 		});
@@ -73,10 +73,10 @@ public class NewVentanaPrincipal extends JFrame implements WindowListener{
 		mntmConsultarEstaciones.addActionListener(new ActionListener() {
 			
 			public void actionPerformed(ActionEvent arg0) {
-				VentanaListarEstaciones verEstaciones = new VentanaListarEstaciones();
+				NewVentanaListarEstaciones verEstaciones = new NewVentanaListarEstaciones();
 				verEstaciones.setTitle("Encontrar Estaciones");
 				verEstaciones.setVisible(true);
-				verEstaciones.setDefaultCloseOperation(HIDE_ON_CLOSE);
+				verEstaciones.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 				
 			}
 		});
@@ -89,7 +89,7 @@ public class NewVentanaPrincipal extends JFrame implements WindowListener{
 				VentanaListarCocheras verCocheras = new VentanaListarCocheras();
 				verCocheras.setTitle("Encontrar Cocheras");
 				verCocheras.setVisible(true);
-				verCocheras.setDefaultCloseOperation(HIDE_ON_CLOSE);
+				verCocheras.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 				
 			}
 		});
@@ -102,7 +102,7 @@ public class NewVentanaPrincipal extends JFrame implements WindowListener{
 				VentanaListarLineasEstacion verLineasEstacion = new VentanaListarLineasEstacion();
 				verLineasEstacion.setTitle("Encontrar LineaEstación");
 				verLineasEstacion.setVisible(true);
-				verLineasEstacion.setDefaultCloseOperation(HIDE_ON_CLOSE);
+				verLineasEstacion.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 				
 			}
 		});
@@ -115,7 +115,7 @@ public class NewVentanaPrincipal extends JFrame implements WindowListener{
 				VentanaListarViajes verViajes = new VentanaListarViajes();
 				verViajes.setTitle("Encontrar Viajes");
 				verViajes.setVisible(true);
-				verViajes.setDefaultCloseOperation(HIDE_ON_CLOSE);
+				verViajes.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 				
 			}
 		});
@@ -131,7 +131,7 @@ public class NewVentanaPrincipal extends JFrame implements WindowListener{
 				NewVentanaInsertRegistros verInsertar = new NewVentanaInsertRegistros();
 				verInsertar.setTitle("Ingresar Linea");
 				verInsertar.setVisible(true);
-				verInsertar.setDefaultCloseOperation(HIDE_ON_CLOSE);
+				verInsertar.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 			}
 		});
 		
@@ -140,14 +140,28 @@ public class NewVentanaPrincipal extends JFrame implements WindowListener{
 		
 		JMenuItem mntmModificarEstacin = new JMenuItem("Modificar Estación");
 		mnModificar.add(mntmModificarEstacin);
+		
+		JMenu mnConsultarEstaciones = new JMenu("Consultar Estaciones");
+		menuBar.add(mnConsultarEstaciones);
+		
+		JMenuItem mntmConsultar = new JMenuItem("Consultar");
+		mnConsultarEstaciones.add(mntmConsultar);
 		mntmModificarEstacin.addActionListener(new ActionListener() {
 			
 			public void actionPerformed(ActionEvent arg0) {
 				VentanaModEstaciones modEstacion = new VentanaModEstaciones();
 				modEstacion.setTitle("Modificar Estación");
 				modEstacion.setVisible(true);
-				modEstacion.setDefaultCloseOperation(HIDE_ON_CLOSE);
+				modEstacion.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 				
+			}
+		});
+		mntmConsultar.addActionListener(new ActionListener() {
+			
+			public void actionPerformed(ActionEvent arg0) {
+				VentanaVerEStacionVIajes verVentana = new VentanaVerEStacionVIajes();
+				verVentana.setVisible(true);
+				verVentana.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 			}
 		});
 		contentPane = new JPanel();

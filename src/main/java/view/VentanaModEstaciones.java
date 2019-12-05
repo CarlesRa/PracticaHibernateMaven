@@ -77,7 +77,6 @@ public class VentanaModEstaciones extends JFrame {
 					JOptionPane.showMessageDialog(null, "Campos modificados correctamente!!");
 					llenarCampos(estacion);
 					session.close();
-					sessionF.close();
 				}catch(NumberFormatException nfe) {
 					JOptionPane.showMessageDialog(null, "Los Campos No estan llenos...");
 				}
