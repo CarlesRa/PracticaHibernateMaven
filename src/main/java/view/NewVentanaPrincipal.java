@@ -13,6 +13,7 @@ import javax.swing.JPanel;
 import javax.swing.GroupLayout.Alignment;
 import javax.swing.border.Border;
 import javax.swing.border.EmptyBorder;
+import javax.swing.JMenu;
 
 public class NewVentanaPrincipal extends JFrame {
 
@@ -46,23 +47,128 @@ public class NewVentanaPrincipal extends JFrame {
 		
 		setJMenuBar(menuBar);
 		
-		JMenuItem mntmNuevaLinea = new JMenuItem("Nueva Linea");
-		menuBar.add(mntmNuevaLinea);
+		JMenu mnConsultas = new JMenu("Consultas");
+		menuBar.add(mnConsultas);
 		
-		JMenuItem mntmListarTablas = new JMenuItem("Listar Tablas");
-		menuBar.add(mntmListarTablas);
-		
-		JMenuItem mntmModificarC = new JMenuItem("Modificar Campos");
-		menuBar.add(mntmModificarC);
-		mntmNuevaLinea.setBorder(border);
-		mntmListarTablas.setBorder(border);
-		mntmModificarC.setBorder(border);
-		mntmNuevaLinea.addActionListener(new ActionListener() {
+		JMenuItem mntmConsultarTrenes = new JMenuItem("Consultar Trenes");
+		mnConsultas.add(mntmConsultarTrenes);
+		mntmConsultarTrenes.addActionListener(new ActionListener() {
 			
 			public void actionPerformed(ActionEvent arg0) {
-				NewVentanaInsertRegistros ventanaInRegistros = new NewVentanaInsertRegistros();
-				ventanaInRegistros.setVisible(true);
-				ventanaInRegistros.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);	
+				NewVentanaListarTrenes verTrenes = new NewVentanaListarTrenes();
+				verTrenes.setTitle("Econtrar trenes");
+				verTrenes.setVisible(true);
+				verTrenes.setDefaultCloseOperation(HIDE_ON_CLOSE);
+				
+			}
+		});
+		
+		JMenuItem mntmConsultarAccesos = new JMenuItem("Consultar Accesos");
+		mnConsultas.add(mntmConsultarAccesos);
+		mntmConsultarAccesos.addActionListener(new ActionListener() {
+			
+			public void actionPerformed(ActionEvent arg0) {
+				VentanaListarAccesos verAccesos = new VentanaListarAccesos();
+				verAccesos.setTitle("Encontrar accesos");
+				verAccesos.setVisible(true);
+				verAccesos.setDefaultCloseOperation(HIDE_ON_CLOSE);
+				
+			}
+		});
+		
+		JMenuItem mntmConsultarLineas = new JMenuItem("Consultar Lineas");
+		mnConsultas.add(mntmConsultarLineas);
+		mntmConsultarLineas.addActionListener(new ActionListener() {
+			
+			public void actionPerformed(ActionEvent arg0) {
+				VentanaListarLineas verLineas = new VentanaListarLineas();
+				verLineas.setTitle("Encontrar Lineas");
+				verLineas.setVisible(true);
+				verLineas.setDefaultCloseOperation(HIDE_ON_CLOSE);
+				
+			}
+		});
+		
+		JMenuItem mntmConsultarEstaciones = new JMenuItem("Consultar Estaciones");
+		mnConsultas.add(mntmConsultarEstaciones);
+		mntmConsultarEstaciones.addActionListener(new ActionListener() {
+			
+			public void actionPerformed(ActionEvent arg0) {
+				VentanaListarEstaciones verEstaciones = new VentanaListarEstaciones();
+				verEstaciones.setTitle("Encontrar Estaciones");
+				verEstaciones.setVisible(true);
+				verEstaciones.setDefaultCloseOperation(HIDE_ON_CLOSE);
+				
+			}
+		});
+		
+		JMenuItem mntmConsultarCocheras = new JMenuItem("Consultar Cocheras");
+		mnConsultas.add(mntmConsultarCocheras);
+		mntmConsultarCocheras.addActionListener(new ActionListener() {
+			
+			public void actionPerformed(ActionEvent arg0) {
+				VentanaListarCocheras verCocheras = new VentanaListarCocheras();
+				verCocheras.setTitle("Encontrar Cocheras");
+				verCocheras.setVisible(true);
+				verCocheras.setDefaultCloseOperation(HIDE_ON_CLOSE);
+				
+			}
+		});
+		
+		JMenuItem mntmConsultarLineasestacin = new JMenuItem("Consultar LineasEstación");
+		mnConsultas.add(mntmConsultarLineasestacin);
+		mntmConsultarLineasestacin.addActionListener(new ActionListener() {
+			
+			public void actionPerformed(ActionEvent arg0) {
+				VentanaListarLineasEstacion verLineasEstacion = new VentanaListarLineasEstacion();
+				verLineasEstacion.setTitle("Encontrar LineaEstación");
+				verLineasEstacion.setVisible(true);
+				verLineasEstacion.setDefaultCloseOperation(HIDE_ON_CLOSE);
+				
+			}
+		});
+		
+		JMenuItem mntmConsultarViajes = new JMenuItem("Consultar Viajes");
+		mnConsultas.add(mntmConsultarViajes);
+		mntmConsultarViajes.addActionListener(new ActionListener() {
+			
+			public void actionPerformed(ActionEvent arg0) {
+				VentanaListarViajes verViajes = new VentanaListarViajes();
+				verViajes.setTitle("Encontrar Viajes");
+				verViajes.setVisible(true);
+				verViajes.setDefaultCloseOperation(HIDE_ON_CLOSE);
+				
+			}
+		});
+		
+		JMenu mnInsertar = new JMenu("Insertar");
+		menuBar.add(mnInsertar);
+		
+		JMenuItem mntmInsertarLineaEstacin = new JMenuItem("Insertar Linea Estación");
+		mnInsertar.add(mntmInsertarLineaEstacin);
+		mntmInsertarLineaEstacin.addActionListener(new ActionListener() {
+			
+			public void actionPerformed(ActionEvent arg0) {
+				NewVentanaInsertRegistros verInsertar = new NewVentanaInsertRegistros();
+				verInsertar.setTitle("Ingresar Linea");
+				verInsertar.setVisible(true);
+				verInsertar.setDefaultCloseOperation(HIDE_ON_CLOSE);
+			}
+		});
+		
+		JMenu mnModificar = new JMenu("Modificar");
+		menuBar.add(mnModificar);
+		
+		JMenuItem mntmModificarEstacin = new JMenuItem("Modificar Estación");
+		mnModificar.add(mntmModificarEstacin);
+		mntmModificarEstacin.addActionListener(new ActionListener() {
+			
+			public void actionPerformed(ActionEvent arg0) {
+				VentanaModEstaciones modEstacion = new VentanaModEstaciones();
+				modEstacion.setTitle("Encontrar accesos");
+				modEstacion.setVisible(true);
+				modEstacion.setDefaultCloseOperation(HIDE_ON_CLOSE);
+				
 			}
 		});
 		contentPane = new JPanel();

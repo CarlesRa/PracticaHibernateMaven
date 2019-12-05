@@ -28,19 +28,18 @@ import org.hibernate.Transaction;
 import org.hibernate.query.Query;
 
 import hibernateutil.HibernateUtil;
-import model.TTrenes;
-import model.TViajes;
+import model.TCocheras;
 
-public class VentanaListarViajes extends JFrame {
+
+public class VentanaListarCocheras extends JFrame {
 
 	private static final long serialVersionUID = 1L;
 	private JPanel contentPane;
 	private JTable tVerTrenes;
-	private JTextField tfCodViaje;
+	private JTextField tfCodCochera;
 	private JTextField tfNombre;
-	private JTextField tfOrigen;
-	private JTextField tfDestino;
-	private ArrayList<TViajes> viajes;
+	private ArrayList<TCocheras> cocheras;
+	private JTextField tfDireccion;
 	/**
 	 * Launch the application.
 	 */
@@ -48,7 +47,7 @@ public class VentanaListarViajes extends JFrame {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
-					VentanaListarViajes frame = new VentanaListarViajes();
+					VentanaListarCocheras frame = new VentanaListarCocheras();
 					frame.setVisible(true);
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -58,7 +57,7 @@ public class VentanaListarViajes extends JFrame {
 	}
 
 	
-	public VentanaListarViajes() {
+	public VentanaListarCocheras() {
 		setBounds(100, 100, 896, 451);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
@@ -66,37 +65,27 @@ public class VentanaListarViajes extends JFrame {
 		
 		JScrollPane scrollPane = new JScrollPane();
 		
-		JLabel lblCodTren = new JLabel("Cod. VIAJE:");
+		JLabel lblCodCochera = new JLabel("Cod.COCHERA:");
 		
-		tfCodViaje = new JTextField();
-		tfCodViaje.setColumns(10);
+		tfCodCochera = new JTextField();
+		tfCodCochera.setColumns(10);
 		
 		JLabel lblNombre = new JLabel("NOMBRE:");
 		
 		tfNombre = new JTextField();
 		tfNombre.setColumns(10);
 		
-		JLabel lblNewLabel = new JLabel("ORIGEN:");
-		
-		tfOrigen = new JTextField();
-		tfOrigen.setColumns(10);
-		
-		JLabel lblLinea = new JLabel("DESTINO:");
-		
-		tfDestino = new JTextField();
-		tfDestino.setColumns(10);
-		
 		tVerTrenes = new JTable();
 		DefaultTableModel dtm = new DefaultTableModel();
-		dtm.setColumnIdentifiers(new Object[] {"CodViaje", "Nombre","Origen","Destino"});
+		dtm.setColumnIdentifiers(new Object[] {"CodCochera", "Nombre", "Dirección"});
 		
 		Session session = HibernateUtil.getSessionFactory().openSession();
 		Transaction tr = session.beginTransaction();
 		@SuppressWarnings("unchecked")
-		Query<TViajes> query = session.createQuery("from TViajes");
-		viajes =(ArrayList<TViajes>) query.list();
-		for(TViajes t : viajes) {
-			Object[] row = {t.getCodViaje(), t.getNombre(), t.getEstacionorigen(), t.getEstaciondestino()};
+		Query<TCocheras> query = session.createQuery("from TCocheras");
+		cocheras =(ArrayList<TCocheras>) query.list();
+		for(TCocheras t : cocheras) {
+			Object[] row = {t.getCodCochera(), t.getNombre(), t.getDireccion()};
 			dtm.addRow(row);
 		}
 		
@@ -110,11 +99,11 @@ public class VentanaListarViajes extends JFrame {
 				SessionFactory sessionF = HibernateUtil.getSessionFactory();
 				Session session = sessionF.openSession();
 				try {
-					TViajes viaje = session.load(TViajes.class, Integer.parseInt(tfCodViaje.getText()));
-					rellenarCampos(viaje);
-					tVerTrenes.setRowSelectionInterval(viaje.getCodViaje()-1, viaje.getCodViaje()-1);
+					TCocheras cochera = session.load(TCocheras.class, Integer.parseInt(tfCodCochera.getText()));
+					rellenarCampos(cochera);
+					tVerTrenes.setRowSelectionInterval(cochera.getCodCochera()-1, cochera.getCodCochera()-1);
 				}catch(ObjectNotFoundException onfe){
-					JOptionPane.showMessageDialog(null,"Ningun Viaje con ese código");
+					mensajeCampoCodigoVacio();
 				}catch(NumberFormatException nfe) {
 					JOptionPane.showMessageDialog(null,"Dato Erroneo....");
 				}
@@ -129,24 +118,24 @@ public class VentanaListarViajes extends JFrame {
 				Session session = sessionF.openSession();
 				try {
 					
-					tfCodViaje.setText(String.valueOf((Integer.parseInt(tfCodViaje.getText()) + 1)));
-					TViajes viaje = session.load(TViajes.class, Integer.parseInt(tfCodViaje.getText()));
-					tVerTrenes.setRowSelectionInterval(viaje.getCodViaje()-1, viaje.getCodViaje()-1);
-					rellenarCampos(viaje);
+					tfCodCochera.setText(String.valueOf((Integer.parseInt(tfCodCochera.getText()) + 1)));
+					TCocheras acceso = session.load(TCocheras.class, Integer.parseInt(tfCodCochera.getText()));
+					tVerTrenes.setRowSelectionInterval(acceso.getCodCochera()-1, acceso.getCodCochera()-1);
+					rellenarCampos(acceso);
 					
-				}catch (NumberFormatException nfe) {
+				}catch(NumberFormatException nfe){
 					mensajeCampoCodigoVacio();
 				}
 				catch (IllegalArgumentException npe) {
 					mensajeNoRegistros();
-					tfCodViaje.setText(String.valueOf((Integer.parseInt(tfCodViaje.getText()) - 1)));
+					tfCodCochera.setText(String.valueOf((Integer.parseInt(tfCodCochera.getText()) - 1)));
 				}
 				catch(ObjectNotFoundException infe) {
 					mensajeNoRegistros();
-					tfCodViaje.setText(String.valueOf((Integer.parseInt(tfCodViaje.getText()) - 1)));
+					tfCodCochera.setText(String.valueOf((Integer.parseInt(tfCodCochera.getText()) - 1)));
 				}catch(HibernateException he) {
 					mensajeNoRegistros();
-					tfCodViaje.setText(String.valueOf((Integer.parseInt(tfCodViaje.getText()) - 1)));
+					tfCodCochera.setText(String.valueOf((Integer.parseInt(tfCodCochera.getText()) - 1)));
 				}
 				
 			}
@@ -160,23 +149,23 @@ public class VentanaListarViajes extends JFrame {
 				Session session = sessionF.openSession();
 				try {
 					
-					tfCodViaje.setText(String.valueOf((Integer.parseInt(tfCodViaje.getText()) - 1)));
-					TViajes viaje = session.load(TViajes.class, Integer.parseInt(tfCodViaje.getText()));
-					tVerTrenes.setRowSelectionInterval(viaje.getCodViaje()-1, viaje.getCodViaje()-1);
-					rellenarCampos(viaje);
+					tfCodCochera.setText(String.valueOf((Integer.parseInt(tfCodCochera.getText()) - 1)));
+					TCocheras linea = session.load(TCocheras.class, Integer.parseInt(tfCodCochera.getText()));
+					tVerTrenes.setRowSelectionInterval(linea.getCodCochera()-1, linea.getCodCochera()-1);
+					rellenarCampos(linea);
 				}catch (NumberFormatException nfe) {
 					mensajeCampoCodigoVacio();
-					tfCodViaje.setText(String.valueOf((Integer.parseInt(tfCodViaje.getText()) + 1)));
+					tfCodCochera.setText(String.valueOf((Integer.parseInt(tfCodCochera.getText()) + 1)));
 				}
 				catch(ObjectNotFoundException infe) {
 					mensajeNoRegistros();
-					tfCodViaje.setText(String.valueOf((Integer.parseInt(tfCodViaje.getText()) + 1)));
+					tfCodCochera.setText(String.valueOf((Integer.parseInt(tfCodCochera.getText()) + 1)));
 				}catch(IllegalArgumentException iae) {
 					mensajeNoRegistros();
-					tfCodViaje.setText(String.valueOf((Integer.parseInt(tfCodViaje.getText()) + 1)));
+					tfCodCochera.setText(String.valueOf((Integer.parseInt(tfCodCochera.getText()) + 1)));
 				}catch(HibernateException he) {
 					mensajeNoRegistros();
-					tfCodViaje.setText(String.valueOf((Integer.parseInt(tfCodViaje.getText()) + 1)));
+					tfCodCochera.setText(String.valueOf((Integer.parseInt(tfCodCochera.getText()) + 1)));
 				}
 			}
 		});
@@ -184,20 +173,25 @@ public class VentanaListarViajes extends JFrame {
 		JButton btFirst = new JButton("<<");
 		btFirst.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-				TViajes firstTren = viajes.get(0);
-				rellenarCampos(firstTren);
-				seleccionarFila(firstTren);
+				TCocheras firstAcceso = cocheras.get(0);
+				rellenarCampos(firstAcceso);
+				seleccionarFila(firstAcceso);
 			}
 		});
 		
 		JButton btLastt = new JButton(">>");
 		btLastt.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-				TViajes lastTren = viajes.get(viajes.size()-1);
-				rellenarCampos(lastTren);
-				seleccionarFila(lastTren);
+				TCocheras lastAcceso = cocheras.get(cocheras.size() - 1);
+				rellenarCampos(lastAcceso);
+				seleccionarFila(lastAcceso);
 			}
 		});
+		
+		JLabel lblCodEstacin = new JLabel("DIRECCIÓN:");
+		
+		tfDireccion = new JTextField();
+		tfDireccion.setColumns(10);
 		
 		GroupLayout gl_contentPane = new GroupLayout(contentPane);
 		gl_contentPane.setHorizontalGroup(
@@ -207,36 +201,30 @@ public class VentanaListarViajes extends JFrame {
 					.addGroup(gl_contentPane.createParallelGroup(Alignment.LEADING)
 						.addComponent(scrollPane, GroupLayout.DEFAULT_SIZE, 862, Short.MAX_VALUE)
 						.addGroup(gl_contentPane.createSequentialGroup()
-							.addGroup(gl_contentPane.createParallelGroup(Alignment.TRAILING, false)
+							.addGroup(gl_contentPane.createParallelGroup(Alignment.LEADING, false)
 								.addGroup(gl_contentPane.createSequentialGroup()
 									.addComponent(lblNombre)
 									.addPreferredGap(ComponentPlacement.RELATED)
 									.addComponent(tfNombre))
-								.addGroup(Alignment.LEADING, gl_contentPane.createSequentialGroup()
+								.addGroup(gl_contentPane.createSequentialGroup()
 									.addComponent(btFirst)
 									.addGap(27)
 									.addComponent(btPrevious)
 									.addGap(102)
-									.addComponent(lblCodTren)
+									.addComponent(lblCodCochera)
 									.addPreferredGap(ComponentPlacement.RELATED)
-									.addComponent(tfCodViaje, GroupLayout.PREFERRED_SIZE, 49, GroupLayout.PREFERRED_SIZE)))
+									.addComponent(tfCodCochera, GroupLayout.PREFERRED_SIZE, 49, GroupLayout.PREFERRED_SIZE)))
+							.addGap(61)
+							.addGroup(gl_contentPane.createParallelGroup(Alignment.TRAILING)
+								.addComponent(btnLocalizar)
+								.addComponent(lblCodEstacin))
+							.addPreferredGap(ComponentPlacement.RELATED)
 							.addGroup(gl_contentPane.createParallelGroup(Alignment.LEADING)
-								.addGroup(gl_contentPane.createSequentialGroup()
-									.addGap(48)
-									.addComponent(btnLocalizar)
-									.addPreferredGap(ComponentPlacement.RELATED, 211, Short.MAX_VALUE)
+								.addGroup(Alignment.TRAILING, gl_contentPane.createSequentialGroup()
 									.addComponent(btNext)
 									.addGap(34)
 									.addComponent(btLastt))
-								.addGroup(Alignment.TRAILING, gl_contentPane.createSequentialGroup()
-									.addGap(84)
-									.addComponent(lblNewLabel)
-									.addPreferredGap(ComponentPlacement.UNRELATED)
-									.addComponent(tfOrigen, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-									.addPreferredGap(ComponentPlacement.UNRELATED)
-									.addComponent(lblLinea)
-									.addPreferredGap(ComponentPlacement.RELATED)
-									.addComponent(tfDestino, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)))))
+								.addComponent(tfDireccion, GroupLayout.DEFAULT_SIZE, 292, Short.MAX_VALUE))))
 					.addContainerGap())
 		);
 		gl_contentPane.setVerticalGroup(
@@ -244,7 +232,7 @@ public class VentanaListarViajes extends JFrame {
 				.addGroup(gl_contentPane.createSequentialGroup()
 					.addContainerGap()
 					.addComponent(scrollPane, GroupLayout.PREFERRED_SIZE, 289, GroupLayout.PREFERRED_SIZE)
-					.addGap(18)
+					.addGap(17)
 					.addGroup(gl_contentPane.createParallelGroup(Alignment.LEADING)
 						.addGroup(gl_contentPane.createParallelGroup(Alignment.BASELINE)
 							.addComponent(btFirst)
@@ -252,38 +240,37 @@ public class VentanaListarViajes extends JFrame {
 							.addComponent(btLastt)
 							.addComponent(btNext))
 						.addGroup(gl_contentPane.createParallelGroup(Alignment.BASELINE)
-							.addComponent(lblCodTren)
-							.addComponent(tfCodViaje, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+							.addComponent(lblCodCochera)
+							.addComponent(tfCodCochera, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
 							.addComponent(btnLocalizar)))
-					.addGap(50)
-					.addGroup(gl_contentPane.createParallelGroup(Alignment.BASELINE)
-						.addComponent(lblNombre)
-						.addComponent(tfNombre, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-						.addComponent(tfDestino, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-						.addComponent(lblLinea)
-						.addComponent(tfOrigen, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-						.addComponent(lblNewLabel))
-					.addContainerGap(GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+					.addGap(18)
+					.addGroup(gl_contentPane.createParallelGroup(Alignment.LEADING)
+						.addGroup(gl_contentPane.createParallelGroup(Alignment.BASELINE)
+							.addComponent(lblNombre)
+							.addComponent(tfNombre, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+						.addGroup(gl_contentPane.createParallelGroup(Alignment.BASELINE)
+							.addComponent(lblCodEstacin)
+							.addComponent(tfDireccion, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)))
+					.addContainerGap(31, Short.MAX_VALUE))
 		);
 		contentPane.setLayout(gl_contentPane);
 		
 	}
 	
-	public void rellenarCampos(TViajes viaje) {
+	public void rellenarCampos(TCocheras cochera) {
 		try {
 			
-		tfCodViaje.setText(String.valueOf(viaje.getCodViaje()));
-		tfNombre.setText(viaje.getNombre());
-		tfOrigen.setText(String.valueOf(viaje.getEstacionorigen()));
-		tfDestino.setText(String.valueOf(viaje.getEstaciondestino()));
+		tfCodCochera.setText(String.valueOf(cochera.getCodCochera()));
+		tfNombre.setText(cochera.getNombre());
+		tfDireccion.setText(String.valueOf(cochera.getDireccion()));
 		
 		}catch (ObjectNotFoundException onfe) {
 			
 		}
 	}
 
-	public int tripPosition(TViajes viaje) {
-		return viajes.indexOf(viaje);
+	public int tripPosition(TCocheras cochera) {
+		return cocheras.indexOf(cochera);
 	}
 	
 	public void mensajeNoRegistros() {
@@ -294,8 +281,8 @@ public class VentanaListarViajes extends JFrame {
 		JOptionPane.showMessageDialog(null,"No ha introducido ningun Código");
 	}
 	
-	public void seleccionarFila(TViajes viajes) {
-		tVerTrenes.setRowSelectionInterval(tripPosition(viajes), tripPosition(viajes));
+	public void seleccionarFila(TCocheras cochera) {
+		tVerTrenes.setRowSelectionInterval(tripPosition(cochera), tripPosition(cochera));
 	}
 
 }

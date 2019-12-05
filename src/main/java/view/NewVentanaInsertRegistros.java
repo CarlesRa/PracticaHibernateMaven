@@ -58,7 +58,6 @@ public class NewVentanaInsertRegistros extends JFrame {
 	 * Create the frame.
 	 */
 	public NewVentanaInsertRegistros() {
-		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 450, 300);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
@@ -85,19 +84,21 @@ public class NewVentanaInsertRegistros extends JFrame {
 		JButton btnInsertarLnea = new JButton("INSERTAR LÍNEA");
 		btnInsertarLnea.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-				SessionFactory sessionF = HibernateUtil.getSessionFactory();
-				Session session = sessionF.openSession();
-				org.hibernate.Transaction tr = session.beginTransaction();
-				TLineas linea = session.load(TLineas.class, Integer.valueOf(tfNumLinea.getText()));
-				TEstaciones estacion = session.load(TEstaciones.class, Integer.valueOf(tfNumEstacion.getText()));
-				TLineaEstacionId idLineaEstacion = new TLineaEstacionId(linea.getCodLinea(),estacion.getCodEstacion());
-				
-				TLineaEstacion tle = new TLineaEstacion(idLineaEstacion, null, null,Integer.valueOf(tfOrden.getText()));
 				try {
+					SessionFactory sessionF = HibernateUtil.getSessionFactory();
+					Session session = sessionF.openSession();
+					org.hibernate.Transaction tr = session.beginTransaction();
+					TLineas linea = session.load(TLineas.class, Integer.valueOf(tfNumLinea.getText()));
+					TEstaciones estacion = session.load(TEstaciones.class, Integer.valueOf(tfNumEstacion.getText()));
+					TLineaEstacionId idLineaEstacion = new TLineaEstacionId(linea.getCodLinea(),estacion.getCodEstacion());
+					TLineaEstacion tle = new TLineaEstacion(idLineaEstacion, null, null,Integer.valueOf(tfOrden.getText()));
 					session.save(tle);
 					tr.commit();
 					tpNotificaciones.setText("Insertado correctamente!!");
-				}catch(ConstraintViolationException cve) {
+				}catch (NumberFormatException nfe) {
+					tpNotificaciones.setText("Dato erróneo o nulo");
+				}
+				catch(ConstraintViolationException cve) {
 					tpNotificaciones.setText("Error al insertar!!");
 				}catch(PersistenceException pe) {
 					tpNotificaciones.setText("Error al insertar!!");

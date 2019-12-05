@@ -55,7 +55,6 @@ public class NewVentanaListarTrenes extends JFrame {
 
 	
 	public NewVentanaListarTrenes() {
-		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 896, 598);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
@@ -117,7 +116,10 @@ public class NewVentanaListarTrenes extends JFrame {
 				try {
 					rellenarCampos(tren);
 					tVerTrenes.setRowSelectionInterval(tren.getCodTren()-1, tren.getCodTren()-1);
-				}catch(ObjectNotFoundException onfe){
+				}catch(NumberFormatException nfe) {
+					mensajeCampoCodigoVacio();
+				}
+				catch(ObjectNotFoundException onfe){
 					JOptionPane.showMessageDialog(null,"Ningun tren con ese código");
 				}
 			}
@@ -135,16 +137,15 @@ public class NewVentanaListarTrenes extends JFrame {
 					TTrenes tren = session.load(TTrenes.class, Integer.parseInt(tfCodTren.getText()));
 					rellenarCampos(tren);
 					tVerTrenes.setRowSelectionInterval(tren.getCodTren() - 1, tren.getCodTren() - 1);
+				}catch(NumberFormatException nfe) {
+					mensajeCampoCodigoVacio();
 				}catch(ObjectNotFoundException infe) {
 					JOptionPane.showMessageDialog(null,"No hay más registros");
 					tfCodTren.setText(String.valueOf((Integer.parseInt(tfCodTren.getText()) - 1)));
 				}catch(HibernateException he) {
 					JOptionPane.showMessageDialog(null,"No hay más registros");
 					tfCodTren.setText(String.valueOf((Integer.parseInt(tfCodTren.getText()) - 1)));
-				}catch(NumberFormatException nfe) {
-					JOptionPane.showMessageDialog(null,"No ha introducido ningun Código de tren");
 				}
-				
 			}
 		});
 		
@@ -160,11 +161,12 @@ public class NewVentanaListarTrenes extends JFrame {
 					TTrenes tren = session.load(TTrenes.class, Integer.parseInt(tfCodTren.getText()));
 					rellenarCampos(tren);
 					tVerTrenes.setRowSelectionInterval(tren.getCodTren(), tren.getCodTren());
-				}catch(ObjectNotFoundException infe) {
+				}catch(NumberFormatException nfe) {
+					mensajeCampoCodigoVacio();
+				}
+				catch(ObjectNotFoundException infe) {
 					JOptionPane.showMessageDialog(null,"No hay más registros");
 					tfCodTren.setText(String.valueOf((Integer.parseInt(tfCodTren.getText()) + 1)));
-				}catch(NumberFormatException nfe) {
-					JOptionPane.showMessageDialog(null,"No ha introducido ningun Código de tren");
 				}catch(HibernateException he) {
 					JOptionPane.showMessageDialog(null,"No hay más registros");
 					tfCodTren.setText(String.valueOf((Integer.parseInt(tfCodTren.getText()) + 1)));
